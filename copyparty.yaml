@@ -6,10 +6,10 @@ services:
     container_name: copyparty
     restart: unless-stopped
     volumes:
-      - "secrets/copyparty.conf:/cfg/copyparty.conf:ro"
+      - "./secrets/copyparty.conf:/cfg/copyparty.conf:ro"
       - "${COPYPARTY_DATA}:/w"
     env_file: 
-      - secrets/blackberry.env
+      - ./secrets/blackberry.env
       - .env
     environment:
       # enable mimalloc by replacing "NOPE" with "2" for a nice speed-boost (will use twice as much ram)
@@ -34,7 +34,7 @@ services:
     container_name: ts-copyparty
     hostname: blackberry-ts-copyparty
     env_file: 
-      - secrets/blackberry.env
+      - ./secrets/blackberry.env
       - .env
     environment:
       - TS_STATE_DIR=/var/lib/tailscale

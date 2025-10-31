@@ -57,7 +57,7 @@ services:
     container_name: immich_postgres
     image: ghcr.io/immich-app/postgres:${IMMICH_POSTGRES_V}    
     env_file: 
-      - secrets/blackberry.env
+      - ./secrets/blackberry.env
       - .env
     environment:
       POSTGRES_PASSWORD: ${IMMICH_DB_PASSWORD}

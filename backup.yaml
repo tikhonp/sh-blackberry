@@ -37,12 +37,12 @@ services:
     volumes:
       - "/etc/localtime:/etc/localtime:ro"
       - "${LOCAL_BACKUP_VOLUME}:/data/:ro"
-      - "secrets/ssh_key:/root/.ssh/id_rsa:ro"
+      - "./secrets/ssh_key:/root/.ssh/id_rsa:ro"
     env_file: 
-      - secrets/blackberry.env
+      - ./secrets/blackberry.env
       - .env
     environment:
-      - CRON_TASK_3=45 4 * * * echo "Starting backup remote..." && rsync -e 'ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no' -az --delete --numeric-ids --stats /data/ root@${REMOTE_BACKUP_TS_HOST}:/data/
+      - CRON_TASK_3=45 4 * * * echo "Starting backup remote..." && rsync -e 'ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no' -az --delete --numeric-ids --stats /data/ root@tailscale-backup-raspberry:/data/
     network_mode: service:ts-backup
     restart: unless-stopped
     depends_on:
