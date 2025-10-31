@@ -9,7 +9,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     env_file: 
       - secrets/blackberry.env
-      - env
+      - .env
     environment:
       - DOZZLE_HOSTNAME=blackberry
       - DOZZLE_NO_ANALYTICS=true
@@ -35,7 +35,7 @@ services:
     hostname: blackberry-ts-dozzle
     env_file: 
       - secrets/blackberry.env
-      - env
+      - .env
     environment:
       - TS_STATE_DIR=/var/lib/tailscale
       - TS_USERSPACE=false

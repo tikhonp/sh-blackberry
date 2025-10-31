@@ -25,7 +25,7 @@ services:
     hostname: blackberry-ts-vaultwarden
     env_file: 
       - secrets/blackberry.env
-      - env
+      - .env
     environment:
       - TS_STATE_DIR=/var/lib/tailscale
       - TS_USERSPACE=false

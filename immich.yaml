@@ -9,7 +9,7 @@ services:
       - "${IMMICH_UPLOAD_LOCATION}:/data"
     env_file: 
       - secrets/blackberry.env
-      - env
+      - .env
     restart: unless-stopped
     healthcheck:
       disable: false
@@ -31,7 +31,7 @@ services:
       - model-cache:/cache
     env_file: 
       - secrets/blackberry.env
-      - env
+      - .env
     restart: unless-stopped
     healthcheck:
       disable: false
@@ -58,7 +58,7 @@ services:
     image: ghcr.io/immich-app/postgres:${IMMICH_POSTGRES_V}    
     env_file: 
       - secrets/blackberry.env
-      - env
+      - .env
     environment:
       POSTGRES_PASSWORD: ${IMMICH_DB_PASSWORD}
       POSTGRES_USER: ${IMMICH_DB_USERNAME}
@@ -80,7 +80,7 @@ services:
     hostname: blackberry-ts-immich
     env_file: 
       - secrets/blackberry.env
-      - env
+      - .env
     environment:
       - TS_STATE_DIR=/var/lib/tailscale
       - TS_USERSPACE=false

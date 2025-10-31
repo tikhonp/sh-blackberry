@@ -18,7 +18,7 @@ services:
       - "${BACKUP_VAULTWARDEN_LOCAL}:/destination-waultwarden"
     env_file: 
       - secrets/blackberry.env
-      - env
+      - .env
     environment:
       - CRON_TASK_1=0 3 * * * echo "Starting backup waultwarden..." && rsync -a --delete --whole-file --stats /source-waultwarden/ /destination-waultwarden/
       - CRON_TASK_2=15 3 * * * echo "Starting backup copyparty..." && rsync -a --delete --whole-file --stats /source-copyparty/ /destination-copyparty/
@@ -31,7 +31,7 @@ services:
         max-file: "10"
 
   backup-to-remote-server:
-    image: eeacms/rsync:${RSYNC_VERSION}
+    image: eeacms/rsync:${RSYNC_V}
     container_name: backup-remote-server
     command: client
     volumes:
@@ -40,7 +40,7 @@ services:
       - "secrets/ssh_key:/root/.ssh/id_rsa:ro"
     env_file: 
       - secrets/blackberry.env
-      - env
+      - .env
     environment:
       - CRON_TASK_3=45 4 * * * echo "Starting backup remote..." && rsync -e 'ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no' -az --delete --numeric-ids --stats /data/ root@${REMOTE_BACKUP_TS_HOST}:/data/
     network_mode: service:ts-backup
@@ -59,7 +59,7 @@ services:
     hostname: blackberry-ts-backup
     env_file: 
       - secrets/blackberry.env
-      - env
+      - .env
     environment:
       - TS_STATE_DIR=/var/lib/tailscale
       - TS_USERSPACE=false
