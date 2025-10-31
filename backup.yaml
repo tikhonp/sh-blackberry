@@ -1,0 +1,82 @@
+name: backup
+
+services:
+  backup-to-local-hdd:
+    image: eeacms/rsync:${RSYNC_V}
+    container_name: backup-local
+    command: client
+    volumes:
+      - "/etc/localtime:/etc/localtime:ro"
+
+      - "${COPYPARTY_DATA}:/source-copyparty:ro"
+      - "${BACKUP_COPYPARTY_LOCAL}:/destination-copyparty"
+
+      - "${IMMICH_DATA}:/source-immich:ro"
+      - "${BACKUP_IMMICH_LOCAL}:/destination-immich"
+
+      - "${VAULTWARDEN_DATA}:/source-waultwarden:ro"
+      - "${BACKUP_VAULTWARDEN_LOCAL}:/destination-waultwarden"
+    env_file: 
+      - secrets/blackberry.env
+      - env
+    environment:
+      - CRON_TASK_1=0 3 * * * echo "Starting backup waultwarden..." && rsync -a --delete --whole-file --stats /source-waultwarden/ /destination-waultwarden/
+      - CRON_TASK_2=15 3 * * * echo "Starting backup copyparty..." && rsync -a --delete --whole-file --stats /source-copyparty/ /destination-copyparty/
+      - CRON_TASK_3=0 4 * * * echo "Starting backup immich..." && rsync -a --delete --whole-file --stats /source-immich/ /destination-immich/
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "10"
+
+  backup-to-remote-server:
+    image: eeacms/rsync:${RSYNC_VERSION}
+    container_name: backup-remote-server
+    command: client
+    volumes:
+      - "/etc/localtime:/etc/localtime:ro"
+      - "${LOCAL_BACKUP_VOLUME}:/data/:ro"
+      - "secrets/ssh_key:/root/.ssh/id_rsa:ro"
+    env_file: 
+      - secrets/blackberry.env
+      - env
+    environment:
+      - CRON_TASK_3=45 4 * * * echo "Starting backup remote..." && rsync -e 'ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no' -az --delete --numeric-ids --stats /data/ root@${REMOTE_BACKUP_TS_HOST}:/data/
+    network_mode: service:ts-backup
+    restart: unless-stopped
+    depends_on:
+      - ts-backup
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "10"
+
+  ts-backup:
+    image: tailscale/tailscale:${TAILSCALE_V}
+    container_name: ts-backup
+    hostname: blackberry-ts-backup
+    env_file: 
+      - secrets/blackberry.env
+      - env
+    environment:
+      - TS_STATE_DIR=/var/lib/tailscale
+      - TS_USERSPACE=false
+      - TS_ACCEPT_DNS=true
+    volumes:
+      - ts-backup-state:/var/lib/tailscale
+    devices:
+      - /dev/net/tun:/dev/net/tun
+    cap_add:
+      - net_admin
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "10"
+
+volumes:
+  ts-backup-state:
+    name: "blackberry-ts-backup-state"

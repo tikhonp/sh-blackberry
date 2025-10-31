@@ -1,0 +1,6 @@
+include:
+  - backup.yaml
+  - dozzle.yaml
+  - copyparty.yaml
+  - immich.yaml
+  - vaultwarden.yaml

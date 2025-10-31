@@ -1,0 +1,57 @@
+name: copyparty
+
+services:
+  copyparty:
+    image: copyparty/dj:${COPYPARTY_V}
+    container_name: copyparty
+    restart: unless-stopped
+    volumes:
+      - "secrets/copyparty.conf:/cfg/copyparty.conf:ro"
+      - "${COPYPARTY_DATA}:/w"
+    env_file: 
+      - secrets/blackberry.env
+      - env
+    environment:
+      # enable mimalloc by replacing "NOPE" with "2" for a nice speed-boost (will use twice as much ram)
+      LD_PRELOAD: /usr/lib/libmimalloc-secure.so.2
+      # ensures log-messages are not delayed (but can reduce speed a tiny bit)
+      PYTHONUNBUFFERED: 1
+      # disable all TLS features so it is behind proxy
+      PRTY_NO_TLS: 1
+    # port: 3923
+    stop_grace_period: 15s  # thumbnailer is allowed to continue finishing up for 10s after the shutdown signal
+    network_mode: service:ts-copyparty
+    depends_on:
+      - ts-copyparty
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "10"
+
+  ts-copyparty:
+    image: tailscale/tailscale:${TAILSCALE_V}
+    container_name: ts-copyparty
+    hostname: blackberry-ts-copyparty
+    env_file: 
+      - secrets/blackberry.env
+      - env
+    environment:
+      - TS_STATE_DIR=/var/lib/tailscale
+      - TS_USERSPACE=false
+    volumes:
+      - ts-copyparty-state:/var/lib/tailscale
+    devices:
+      - /dev/net/tun:/dev/net/tun
+    cap_add:
+      - net_admin
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "10"
+
+volumes:
+  ts-copyparty-state:
+    name: "blackberry-ts-copyparty-state"

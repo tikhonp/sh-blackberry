@@ -1,0 +1,47 @@
+name: vaultwarden
+
+services:
+  vaultwarden:
+    container_name: vaultwarden
+    image: vaultwarden/server:${VAULTWARDEN_V}
+    environment:
+      DOMAIN: "https://secrets.tikhonnnnn.com"
+    volumes:
+      - "${VAULTWARDEN_DATA}:/data/"
+    restart: unless-stopped
+    # port 80
+    network_mode: service:ts-vaultwarden
+    depends_on:
+      - ts-vaultwarden
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "10"
+
+  ts-vaultwarden:
+    image: tailscale/tailscale:${TAILSCALE_V}
+    container_name: ts-vaultwarden
+    hostname: blackberry-ts-vaultwarden
+    env_file: 
+      - secrets/blackberry.env
+      - env
+    environment:
+      - TS_STATE_DIR=/var/lib/tailscale
+      - TS_USERSPACE=false
+    volumes:
+      - ts-vaultwarden-state:/var/lib/tailscale
+    devices:
+      - /dev/net/tun:/dev/net/tun
+    cap_add:
+      - net_admin
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "10"
+
+volumes:
+  ts-vaultwarden-state:
+    name: "blackberry-ts-vaultwarden-state"
