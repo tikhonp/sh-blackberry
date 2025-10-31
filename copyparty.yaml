@@ -18,13 +18,16 @@ services:
       PYTHONUNBUFFERED: 1
       # disable all TLS features so it is behind proxy
       PRTY_NO_TLS: 1
-    # port: 3923
+    expose:
+      - 3923
     stop_grace_period: 15s  # thumbnailer is allowed to continue finishing up for 10s after the shutdown signal
     logging:
       driver: "json-file"
       options:
         max-size: "100m"
         max-file: "10"
+    labels:
+      - dev.dozzle.group=copyparty
 
   ssh-tunnel:
     image: jnovack/autossh:${AUTOSSH_V}
@@ -47,3 +50,5 @@ services:
       options:
         max-size: "100m"
         max-file: "10"
+    labels:
+      - dev.dozzle.group=copyparty
