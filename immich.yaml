@@ -9,9 +9,9 @@ services:
       - secrets/blackberry.env
       - .env
     environment:
-      POSTGRES_PASSWORD: ${IMMICH_DB_PASSWORD}
-      POSTGRES_USER: ${IMMICH_DB_USERNAME}
-      POSTGRES_DB: ${IMMICH_DB_DATABASE_NAME}
+      DB_PASSWORD: ${IMMICH_DB_PASSWORD}
+      DB_USERNAME: ${IMMICH_DB_USERNAME}
+      DB_DATABASE_NAME: ${IMMICH_DB_DATABASE_NAME}
     restart: unless-stopped
     healthcheck:
       disable: false
