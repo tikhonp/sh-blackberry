@@ -1,6 +1,6 @@
 services:
   immich-server:
-    container_name: immich_server
+    container_name: immich-server
     image: ghcr.io/immich-app/immich-server:${IMMICH_V:-release}
     volumes:
       - "/etc/localtime:/etc/localtime:ro"
@@ -8,24 +8,28 @@ services:
     env_file: 
       - secrets/blackberry.env
       - .env
+    environment:
+      POSTGRES_PASSWORD: ${IMMICH_DB_PASSWORD}
+      POSTGRES_USER: ${IMMICH_DB_USERNAME}
+      POSTGRES_DB: ${IMMICH_DB_DATABASE_NAME}
     restart: unless-stopped
     healthcheck:
       disable: false
-    network_mode: service:ts-immich
     depends_on:
       - redis
       - database
-      - ts-immich
     logging:
       driver: "json-file"
       options:
         max-size: "100m"
         max-file: "10"
     labels:
-      - dev.dozzle.name=immich
+      - dev.dozzle.group=immich
+    ports:
+      - '2283:2283'
 
   immich-machine-learning:
-    container_name: immich_machine_learning
+    container_name: immich-machine-learning
     image: ghcr.io/immich-app/immich-machine-learning:${IMMICH_V:-release}
     volumes:
       - model-cache:/cache
@@ -41,7 +45,7 @@ services:
         max-size: "100m"
         max-file: "10"
     labels:
-      - dev.dozzle.name=immich
+      - dev.dozzle.group=immich
 
   redis:
     container_name: immich_redis
@@ -55,7 +59,7 @@ services:
         max-size: "100m"
         max-file: "10"
     labels:
-      - dev.dozzle.name=immich
+      - dev.dozzle.group=immich
 
   database:
     container_name: immich_postgres
@@ -78,36 +82,32 @@ services:
         max-size: "100m"
         max-file: "10"
     labels:
-      - dev.dozzle.name=immich
+      - dev.dozzle.group=immich
 
-  ts-immich:
-    image: tailscale/tailscale:${TAILSCALE_V}
-    container_name: ts-immich
-    hostname: blackberry-ts-immich
+  ssht-immich:
+    image: jnovack/autossh:${AUTOSSH_V}
+    container_name: ssht-immich
     env_file: 
-      - secrets/blackberry.env
+      - ./secrets/blackberry.env
       - .env
-    environment:
-      - TS_STATE_DIR=/var/lib/tailscale
-      - TS_USERSPACE=false
-    volumes:
-      - ts-immich-state:/var/lib/tailscale
-    devices:
-      - /dev/net/tun:/dev/net/tun
-    cap_add:
-      - net_admin
     restart: unless-stopped
+    environment:
+      - SSH_OPTIONS=-o UserKnownHostsFile=/dev/null
+      - SSH_TUNNEL_PORT=10002
+      - SSH_TARGET_HOST=immich-server
+      - SSH_TARGET_PORT=2283
+    volumes:
+      - "./secrets/ssh_key:/id_rsa:ro"
+    depends_on:
+      immich-server:
+        condition: service_healthy
+    labels:
+      - dev.dozzle.group=immich
     logging:
       driver: "json-file"
       options:
         max-size: "100m"
         max-file: "10"
-    ports:
-      - '2283:2283'
-    labels:
-      - dev.dozzle.name=immich
 
 volumes:
   model-cache:
-  ts-immich-state:
-    name: "blackberry-ts-immich-state"
