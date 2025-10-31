@@ -20,38 +20,30 @@ services:
       PRTY_NO_TLS: 1
     # port: 3923
     stop_grace_period: 15s  # thumbnailer is allowed to continue finishing up for 10s after the shutdown signal
-    network_mode: service:ts-copyparty
-    depends_on:
-      - ts-copyparty
     logging:
       driver: "json-file"
       options:
         max-size: "100m"
         max-file: "10"
 
-  ts-copyparty:
-    image: tailscale/tailscale:${TAILSCALE_V}
-    container_name: ts-copyparty
-    hostname: blackberry-ts-copyparty
+  ssh-tunnel:
+    image: jnovack/autossh:${AUTOSSH_V}
+    container_name: ssht-copyparty
+    restart: unless-stopped
     env_file: 
       - ./secrets/blackberry.env
       - .env
     environment:
-      - TS_STATE_DIR=/var/lib/tailscale
-      - TS_USERSPACE=false
+      - SSH_OPTIONS=-o UserKnownHostsFile=/dev/null
+      - SSH_TUNNEL_PORT=10003
+      - SSH_TARGET_HOST=copyparty
+      - SSH_TARGET_PORT=3923
     volumes:
-      - ts-copyparty-state:/var/lib/tailscale
-    devices:
-      - /dev/net/tun:/dev/net/tun
-    cap_add:
-      - net_admin
-    restart: unless-stopped
+      - "./secrets/ssh_key:/id_rsa:ro"
+    depends_on:
+      - copyparty
     logging:
       driver: "json-file"
       options:
         max-size: "100m"
         max-file: "10"
-
-volumes:
-  ts-copyparty-state:
-    name: "blackberry-ts-copyparty-state"
