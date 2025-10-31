@@ -6,12 +6,8 @@ services:
       - "/etc/localtime:/etc/localtime:ro"
       - "${IMMICH_UPLOAD_LOCATION}:/data"
     env_file: 
-      - secrets/blackberry.env
+      - ./secrets/blackberry.env
       - .env
-    environment:
-      DB_PASSWORD: ${IMMICH_DB_PASSWORD}
-      DB_USERNAME: ${IMMICH_DB_USERNAME}
-      DB_DATABASE_NAME: ${IMMICH_DB_DATABASE_NAME}
     restart: unless-stopped
     healthcheck:
       disable: false
@@ -34,7 +30,7 @@ services:
     volumes:
       - model-cache:/cache
     env_file: 
-      - secrets/blackberry.env
+      - ./secrets/blackberry.env
       - .env
     restart: unless-stopped
     healthcheck:
@@ -68,9 +64,9 @@ services:
       - ./secrets/blackberry.env
       - .env
     environment:
-      POSTGRES_PASSWORD: ${IMMICH_DB_PASSWORD}
-      POSTGRES_USER: ${IMMICH_DB_USERNAME}
-      POSTGRES_DB: ${IMMICH_DB_DATABASE_NAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_DB: ${DB_DATABASE_NAME}
       POSTGRES_INITDB_ARGS: '--data-checksums'
     volumes:
       - ${IMMICH_DB_DATA_LOCATION}:/var/lib/postgresql/data

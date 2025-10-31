@@ -27,7 +27,7 @@ services:
         max-size: "100m"
         max-file: "10"
     labels:
-      - dev.dozzle.name=dozzle
+      - dev.dozzle.group=dozzle
 
   ts-dozzle:
     image: tailscale/tailscale:${TAILSCALE_V}
@@ -52,7 +52,7 @@ services:
         max-size: "100m"
         max-file: "10"
     labels:
-      - dev.dozzle.name=dozzle
+      - dev.dozzle.group=dozzle
 
 volumes:
   ts-dozzle-state:
