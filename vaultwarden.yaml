@@ -17,7 +17,7 @@ services:
     labels:
       - dev.dozzle.group=vaultwarden
 
-  ssh-tunnel:
+  ssht-vaultwarden:
     image: jnovack/autossh:${AUTOSSH_V}
     container_name: ssht-vaultwarden
     restart: unless-stopped

@@ -29,7 +29,7 @@ services:
     labels:
       - dev.dozzle.group=copyparty
 
-  ssh-tunnel:
+  ssht-copyparty:
     image: jnovack/autossh:${AUTOSSH_V}
     container_name: ssht-copyparty
     restart: unless-stopped
