@@ -42,7 +42,7 @@ services:
       - ./secrets/blackberry.env
       - .env
     environment:
-      - CRON_TASK_3=45 4 * * * echo "Starting backup remote..." && rsync -e 'ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no' -az --delete --numeric-ids --stats /data/ root@tailscale-backup-raspberry:/data/
+      - CRON_TASK_3=45 4 * * * echo "Starting backup remote..." && rsync -e 'ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no' -az --delete --numeric-ids --stats /data/ root@blueberry-ts-backup:/data/
     network_mode: service:ts-backup
     restart: unless-stopped
     depends_on:
