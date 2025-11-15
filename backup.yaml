@@ -20,7 +20,7 @@ services:
     environment:
       - CRON_TASK_1=0 3 * * * echo "Starting backup waultwarden..." && rsync -a --delete --whole-file --stats /source-waultwarden/ /destination-waultwarden/
       - CRON_TASK_2=15 3 * * * echo "Starting backup copyparty..." && rsync -a --delete --whole-file --stats /source-copyparty/ /destination-copyparty/
-      - CRON_TASK_3=0 4 * * * echo "Starting backup immich..." && rsync -a --delete --whole-file --stats /source-immich/ /destination-immich/
+      - CRON_TASK_3=30 3 * * * echo "Starting backup immich..." && rsync -a --delete --whole-file --stats /source-immich/ /destination-immich/
     restart: unless-stopped
     logging:
       driver: "json-file"
@@ -42,8 +42,8 @@ services:
       - ./secrets/blackberry.env
       - .env
     environment:
-      - CRON_TASK_1=45 4 * * * echo "Starting backup remote blueberry..." && rsync -e 'ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no' -az --delete --numeric-ids --stats /data/ root@blueberry-ts-backup:/data/
-      - CRON_TASK_2=0 5 * * * echo "Starting backup remote apple..." && rsync -e 'ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no' -az --delete --numeric-ids --stats /data/ root@apple-ts-backup:/data/
+      - CRON_TASK_1=0 4 * * * echo "Starting backup remote blueberry..." && rsync -e 'ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no' -az --delete --numeric-ids --stats /data/ root@blueberry-ts-backup:/data/
+      - CRON_TASK_2=30 4 * * * echo "Starting backup remote apple..." && rsync -e 'ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no' -az --delete --numeric-ids --stats /data/ root@apple-ts-backup:/data/
     network_mode: service:ts-backup
     restart: unless-stopped
     depends_on:
