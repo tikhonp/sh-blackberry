@@ -1,6 +1,6 @@
 # sh-blackberry — self-hosted blackberry node
 
-Lenovo Thinkcenter m920q node with self-hosted services.o
+Lenovo Thinkcenter m920q node with self-hosted services.
 
 > Including: `immich`, `copyparty`, `vaultwarden`
 
