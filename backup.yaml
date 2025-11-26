@@ -9,8 +9,8 @@ services:
       - "${COPYPARTY_DATA}:/source-copyparty:ro"
       - "${BACKUP_COPYPARTY_LOCAL}:/destination-copyparty"
 
-      - "${IMMICH_DATA}:/source-immich:ro"
-      - "${BACKUP_IMMICH_LOCAL}:/destination-immich"
+      - "${IMMICH_DATA}postgres/:/source-immich:ro"
+      - "${BACKUP_IMMICH_LOCAL}postgres/:/destination-immich"
 
       - "${VAULTWARDEN_DATA}:/source-waultwarden:ro"
       - "${BACKUP_VAULTWARDEN_LOCAL}:/destination-waultwarden"
