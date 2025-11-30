@@ -5,6 +5,7 @@ services:
     restart: unless-stopped
     volumes:
       - "${SWINGMUSIC_DATA}:/music"
+      - "${COPYPARTY_DATA}/music:/music"
       - "${SWINGMUSIC_DATA}/config:/config"
     env_file: 
       - .env
