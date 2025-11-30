@@ -1,5 +1,3 @@
-name: copyparty
-
 services:
   copyparty:
     image: copyparty/dj:${COPYPARTY_V}

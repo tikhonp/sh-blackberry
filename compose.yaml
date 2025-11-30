@@ -4,3 +4,4 @@ include:
   - copyparty.yaml
   - immich.yaml
   - vaultwarden.yaml
+  - swingmusic.yaml

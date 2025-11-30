@@ -1,0 +1,43 @@
+services:
+  swingmusic:
+    image: ghcr.io/swingmx/swingmusic:${SWINGMUSIC_V}
+    container_name: swingmusic
+    restart: unless-stopped
+    volumes:
+      - "${SWINGMUSIC_DATA}:/music"
+      - "${SWINGMUSIC_DATA}/config:/config"
+    env_file: 
+      - .env
+    expose:
+      - 1970
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "10"
+    labels:
+      - dev.dozzle.group=swingmusic
+
+  ssht-swingmusic:
+    image: jnovack/autossh:${AUTOSSH_V}
+    container_name: ssht-swingmusic
+    restart: unless-stopped
+    env_file: 
+      - ./secrets/blackberry.env
+      - .env
+    environment:
+      - SSH_OPTIONS=-o UserKnownHostsFile=/dev/null
+      - SSH_TUNNEL_PORT=10004
+      - SSH_TARGET_HOST=copyparty
+      - SSH_TARGET_PORT=1970
+    volumes:
+      - "./secrets/ssh_key:/id_rsa:ro"
+    depends_on:
+      - copyparty
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "10"
+    labels:
+      - dev.dozzle.group=swingmusic
