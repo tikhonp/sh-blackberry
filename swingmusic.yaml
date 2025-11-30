@@ -28,7 +28,7 @@ services:
     environment:
       - SSH_OPTIONS=-o UserKnownHostsFile=/dev/null
       - SSH_TUNNEL_PORT=10004
-      - SSH_TARGET_HOST=copyparty
+      - SSH_TARGET_HOST=swingmusic
       - SSH_TARGET_PORT=1970
     volumes:
       - "./secrets/ssh_key:/id_rsa:ro"
