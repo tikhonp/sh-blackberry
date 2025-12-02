@@ -42,3 +42,54 @@ services:
         max-file: "10"
     labels:
       - dev.dozzle.group=swingmusic
+
+  swingsonic:
+    image: ghcr.io/prince527github/swingsonic:latest
+    container_name: swingsonic
+    restart: unless-stopped
+    env_file: 
+      - ./secrets/blackberry.env
+      - .env
+    environment:
+      - SERVER_PORT=3000
+      - SERVER_URL=https://api.music.tikhonnnnn.com
+      - SERVER_API_SUBSONIC_ENABLE=true 
+      - SERVER_API_SUBSONIC_OPTIONS_ZW=true # Enable of Zero Width Character Hack
+      - SERVER_API_JELLYFIN_ENABLE=true 
+      - SERVER_API_EUTERPE=true
+      - SERVER_USERS_0_USERNAME=admin
+      - SERVER_USERS_0_PASSWORD=admin
+      - MUSIC=http://swingmusic:1970
+    expose:
+      - 3000
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "10"
+    labels:
+      - dev.dozzle.group=swingmusic
+      
+  ssht-swingsonic:
+    image: jnovack/autossh:${AUTOSSH_V}
+    container_name: ssht-swingsonic
+    restart: unless-stopped
+    env_file: 
+      - ./secrets/blackberry.env
+      - .env
+    environment:
+      - SSH_OPTIONS=-o UserKnownHostsFile=/dev/null
+      - SSH_TUNNEL_PORT=10005
+      - SSH_TARGET_HOST=swingsonic
+      - SSH_TARGET_PORT=3000
+    volumes:
+      - "./secrets/ssh_key:/id_rsa:ro"
+    depends_on:
+      - copyparty
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "10"
+    labels:
+      - dev.dozzle.group=swingmusic
