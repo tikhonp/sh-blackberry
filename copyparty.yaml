@@ -5,6 +5,8 @@ services:
     restart: unless-stopped
     volumes:
       - "./secrets/copyparty.conf:/cfg/copyparty.conf:ro"
+
+      - "${SWINGMUSIC_DATA}/music:/music"
       - "${COPYPARTY_DATA}:/w"
     env_file: 
       - ./secrets/blackberry.env
