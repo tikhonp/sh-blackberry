@@ -14,13 +14,17 @@ services:
 
       - "${VAULTWARDEN_DATA}:/source-waultwarden:ro"
       - "${BACKUP_VAULTWARDEN_LOCAL}:/destination-waultwarden"
+
+      - "${SWINGMUSIC_DATA}:/source-swingmusic:ro"
+      - "${BACKUP_SWINGMUSIC_LOCAL}:/destination-swingmusic"
     env_file: 
       - secrets/blackberry.env
       - .env
     environment:
-      - CRON_TASK_1=0 3 * * * echo "\nStarting backup WAULTWARDEN..." && rsync -a --delete --whole-file --stats /source-waultwarden/ /destination-waultwarden/
-      - CRON_TASK_2=15 3 * * * echo "\nStarting backup COPYPARTY..." && rsync -a --delete --whole-file --stats /source-copyparty/ /destination-copyparty/
-      - CRON_TASK_3=30 3 * * * echo "\nStarting backup IMMICH..." && rsync -a --delete --whole-file --stats /source-immich/ /destination-immich/
+      - CRON_TASK_1=0 3 * * * echo "Starting backup WAULTWARDEN..." && rsync -a --delete --whole-file --stats /source-waultwarden/ /destination-waultwarden/
+      - CRON_TASK_2=15 3 * * * echo "Starting backup COPYPARTY..." && rsync -a --delete --whole-file --stats /source-copyparty/ /destination-copyparty/
+      - CRON_TASK_3=30 3 * * * echo "Starting backup IMMICH..." && rsync -a --delete --whole-file --stats /source-immich/ /destination-immich/
+      - CRON_TASK_3=45 3 * * * echo "Starting backup SWINGMUSIC..." && rsync -a --delete --whole-file --stats /source-swingmusic/ /destination-swingmusic/
     restart: unless-stopped
     logging:
       driver: "json-file"
