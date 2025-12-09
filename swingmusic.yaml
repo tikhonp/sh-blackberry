@@ -33,7 +33,7 @@ services:
     volumes:
       - "./secrets/ssh_key:/id_rsa:ro"
     depends_on:
-      - copyparty
+      - swingmusic
     logging:
       driver: "json-file"
       options:
@@ -59,6 +59,8 @@ services:
       - SERVER_USERS_0_USERNAME=admin
       - SERVER_USERS_0_PASSWORD=admin
       - MUSIC=http://swingmusic:1970
+    depends_on:
+      - swingmusic
     expose:
       - 3000
     logging:
@@ -84,7 +86,60 @@ services:
     volumes:
       - "./secrets/ssh_key:/id_rsa:ro"
     depends_on:
-      - copyparty
+      - swingsonic
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "10"
+    labels:
+      - dev.dozzle.group=swingmusic
+
+  metadata-remote:
+    image: ghcr.io/wow-signal-dev/metadata-remote:${METADATA_REMOTE_V}
+    container_name: metadata-remote
+    restart: unless-stopped
+    volumes:
+      - "${SWINGMUSIC_DATA}/music:/music"
+    env_file: 
+      - ./secrets/blackberry.env
+      - .env
+    environment:
+      - PUID=1000
+      - PGID=1000
+      # - SHOW_HIDDEN_FILES=true
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8338/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    expose:
+      - 8338
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "10"
+    labels:
+      - dev.dozzle.group=swingmusic
+      
+  ssht-metadata-remote:
+    image: jnovack/autossh:${AUTOSSH_V}
+    container_name: ssht-metadata-remote
+    restart: unless-stopped
+    env_file: 
+      - ./secrets/blackberry.env
+      - .env
+    environment:
+      - SSH_OPTIONS=-o UserKnownHostsFile=/dev/null
+      - SSH_TUNNEL_PORT=10007
+      - SSH_TARGET_HOST=metadata-remote
+      - SSH_TARGET_PORT=8338
+    volumes:
+      - "./secrets/ssh_key:/id_rsa:ro"
+    depends_on:
+      - swingsonic
     logging:
       driver: "json-file"
       options:
