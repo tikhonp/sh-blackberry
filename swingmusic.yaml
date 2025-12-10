@@ -54,10 +54,8 @@ services:
       - SERVER_URL=https://api.music.tikhonnnnn.com
       - SERVER_API_SUBSONIC_ENABLE=true 
       - SERVER_API_SUBSONIC_OPTIONS_ZW=true # Enable of Zero Width Character Hack
-      - SERVER_API_JELLYFIN_ENABLE=true 
-      - SERVER_API_EUTERPE=true
-      - SERVER_USERS_0_USERNAME=admin
-      - SERVER_USERS_0_PASSWORD=admin
+      - SERVER_API_JELLYFIN_ENABLE=false 
+      - SERVER_API_EUTERPE=false
       - MUSIC=http://swingmusic:1970
     depends_on:
       - swingmusic
