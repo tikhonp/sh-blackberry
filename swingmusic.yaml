@@ -23,7 +23,7 @@ services:
     container_name: ssht-swingmusic
     restart: unless-stopped
     env_file: 
-      - ./secrets/blackberry.env
+      - ./secrets/ssh-tunnel.env
       - .env
     environment:
       - SSH_OPTIONS=-o UserKnownHostsFile=/dev/null
@@ -47,7 +47,7 @@ services:
     container_name: swingsonic
     restart: unless-stopped
     env_file: 
-      - ./secrets/blackberry.env
+      - ./secrets/blackberry/swingmusic.env
       - .env
     environment:
       - SERVER_PORT=3000
@@ -74,7 +74,7 @@ services:
     container_name: ssht-swingsonic
     restart: unless-stopped
     env_file: 
-      - ./secrets/blackberry.env
+      - ./secrets/ssh-tunnel.env
       - .env
     environment:
       - SSH_OPTIONS=-o UserKnownHostsFile=/dev/null
@@ -100,7 +100,6 @@ services:
     volumes:
       - "${SWINGMUSIC_DATA}/music:/music"
     env_file: 
-      - ./secrets/blackberry.env
       - .env
     environment:
       - PUID=1000
@@ -121,7 +120,7 @@ services:
     container_name: ssht-metadata-remote
     restart: unless-stopped
     env_file: 
-      - ./secrets/blackberry.env
+      - ./secrets/ssh-tunnel.env
       - .env
     environment:
       - SSH_OPTIONS=-o UserKnownHostsFile=/dev/null

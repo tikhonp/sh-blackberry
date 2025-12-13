@@ -18,7 +18,6 @@ services:
       - "${SWINGMUSIC_DATA}:/source-swingmusic:ro"
       - "${BACKUP_SWINGMUSIC_LOCAL}:/destination-swingmusic"
     env_file: 
-      - secrets/blackberry.env
       - .env
     environment:
       - CRON_TASK_1=0 3 * * * echo "Starting backup WAULTWARDEN..." && rsync -a --delete --whole-file --stats /source-waultwarden/ /destination-waultwarden/
@@ -43,7 +42,6 @@ services:
       - "${LOCAL_BACKUP_VOLUME}:/data/:ro"
       - "./secrets/ssh_key:/root/.ssh/id_rsa:ro"
     env_file: 
-      - ./secrets/blackberry.env
       - .env
     environment:
       - CRON_TASK_1=0 4 * * * echo "Starting backup remote blueberry..." && rsync -e 'ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no' -az --delete --numeric-ids --stats /data/ root@blueberry-ts-backup:/data/
@@ -65,7 +63,7 @@ services:
     container_name: ts-backup
     hostname: blackberry-ts-backup
     env_file: 
-      - secrets/blackberry.env
+      - secrets/tailscale.env
       - .env
     environment:
       - TS_STATE_DIR=/var/lib/tailscale

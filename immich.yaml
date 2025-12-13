@@ -6,7 +6,7 @@ services:
       - "/etc/localtime:/etc/localtime:ro"
       - "${IMMICH_UPLOAD_LOCATION}:/data"
     env_file: 
-      - ./secrets/blackberry.env
+      - ./secrets/blackberry/immich.env
       - .env
     restart: unless-stopped
     healthcheck:
@@ -30,7 +30,7 @@ services:
     volumes:
       - model-cache:/cache
     env_file: 
-      - ./secrets/blackberry.env
+      - ./secrets/blackberry/immich.env
       - .env
     restart: unless-stopped
     healthcheck:
@@ -61,7 +61,7 @@ services:
     container_name: immich_postgres
     image: ghcr.io/immich-app/postgres:${IMMICH_POSTGRES_V}    
     env_file: 
-      - ./secrets/blackberry.env
+      - ./secrets/blackberry/immich.env
       - .env
     environment:
       POSTGRES_INITDB_ARGS: '--data-checksums'
@@ -81,7 +81,7 @@ services:
     image: jnovack/autossh:${AUTOSSH_V}
     container_name: ssht-immich
     env_file: 
-      - ./secrets/blackberry.env
+      - ./secrets/ssh-tunnel.env
       - .env
     restart: unless-stopped
     environment:

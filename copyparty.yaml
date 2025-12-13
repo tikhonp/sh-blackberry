@@ -9,7 +9,6 @@ services:
       - "${SWINGMUSIC_DATA}/music:/music"
       - "${COPYPARTY_DATA}:/w"
     env_file: 
-      - ./secrets/blackberry.env
       - .env
     environment:
       # enable mimalloc by replacing "NOPE" with "2" for a nice speed-boost (will use twice as much ram)
@@ -34,7 +33,7 @@ services:
     container_name: ssht-copyparty
     restart: unless-stopped
     env_file: 
-      - ./secrets/blackberry.env
+      - ./secrets/ssh-tunnel.env
       - .env
     environment:
       - SSH_OPTIONS=-o UserKnownHostsFile=/dev/null
