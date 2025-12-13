@@ -144,7 +144,7 @@ services:
     container_name: music-download-bot
     restart: unless-stopped
     env_file:
-      - .secrets/music-download.env
+      - ./secrets/blackberry/music-download.env
     volumes:
       - "${SWINGMUSIC_DATA}/music/qobuz:/downloads"
       - "$HOME/.config/qobuz-dl:/qobuz-dl"
