@@ -43,7 +43,7 @@ services:
       - dev.dozzle.group=swingmusic
 
   swingsonic:
-    image: ghcr.io/prince527github/swingsonic:latest
+    image: docker pull ghcr.io/tikhonp/swingsonic:latest
     container_name: swingsonic
     restart: unless-stopped
     env_file: 
