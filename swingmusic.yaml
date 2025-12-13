@@ -138,3 +138,20 @@ services:
         max-file: "10"
     labels:
       - dev.dozzle.group=swingmusic
+
+  music-download-bot:
+    image: ghcr.io/tikhonp/music-download-bot:latest
+    container_name: music-download-bot
+    restart: unless-stopped
+    env_file:
+      - .secrets/music-download.env
+    volumes:
+      - "${SWINGMUSIC_DATA}/music/qobuz:/downloads"
+      - "$HOME/.config/qobuz-dl:/qobuz-dl"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "10"
+    labels:
+      - dev.dozzle.group=swingmusic
