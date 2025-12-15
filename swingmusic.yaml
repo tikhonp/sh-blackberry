@@ -167,7 +167,7 @@ services:
     environment:
       args: "-H 0.0.0.0"
     volumes:
-      - "${SWINGMUSIC_DATA}/apple-music-data:/app/rootfs/data"
+      - "${SWINGMUSIC_DATA}/apple-music-data/:/app/rootfs/data/"
     expose:
       - "10020"
       - "20020"
@@ -187,7 +187,7 @@ services:
     expose:
       - "8080"
     volumes:
-      - "${SWINGMUSIC_DATA}/apple-music/:/app/rootfs/data/"
+      - "${SWINGMUSIC_DATA}/music/apple-music/:/downloads/"
       - ./secrets/apple-music-config.yaml:/app/config.yaml
     depends_on:
       - apple-music-wrapper
