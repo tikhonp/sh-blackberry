@@ -145,9 +145,52 @@ services:
     restart: unless-stopped
     env_file:
       - ./secrets/blackberry/music-download.env
+    environment:
+      APPLE_MUSIC_DOWNLOAD_URL: "http://apple-music-api:8000"
     volumes:
       - "${SWINGMUSIC_DATA}/music/qobuz:/downloads"
       - "$HOME/.config/qobuz-dl:/qobuz-dl"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "10"
+    labels:
+      - dev.dozzle.group=swingmusic
+    depends_on:
+      - apple-music-api
+
+  apple-music-wrapper:
+    image: tikhonp/apple-music-wrapper
+    container_name: apple-music-wrapper
+    restart: unless-stopped
+    environment:
+      args: "-H 0.0.0.0"
+    volumes:
+      - "${SWINGMUSIC_DATA}/apple-music-data:/app/rootfs/data"
+    expose:
+      - "10020"
+      - "20020"
+      - "30020"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "10"
+    labels:
+      - dev.dozzle.group=swingmusic
+
+  apple-music-api:
+    image: ghcr.io/tikhonp/apple-music-dl-http-wrapper
+    container_name: apple-music-api
+    restart: unless-stopped
+    expose:
+      - "8080"
+    volumes:
+      - "${SWINGMUSIC_DATA}/music/apple-music:/downloads"
+      - ./secrets/apple-music-config.yaml:/app/config.yaml
+    depends_on:
+      - apple-music-wrapper
     logging:
       driver: "json-file"
       options:
