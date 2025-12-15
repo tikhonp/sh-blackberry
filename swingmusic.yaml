@@ -1,6 +1,6 @@
 services:
   swingmusic:
-    image: ghcr.io/swingmx/swingmusic:${SWINGMUSIC_V}
+    image: ghcr.io/tikhonp/swingmusic:latest
     container_name: swingmusic
     restart: unless-stopped
     volumes:
