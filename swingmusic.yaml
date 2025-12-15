@@ -187,7 +187,7 @@ services:
     expose:
       - "8080"
     volumes:
-      - "${SWINGMUSIC_DATA}/music/apple-music:/downloads"
+      - "${SWINGMUSIC_DATA}/apple-music/:/app/rootfs/data/"
       - ./secrets/apple-music-config.yaml:/app/config.yaml
     depends_on:
       - apple-music-wrapper
