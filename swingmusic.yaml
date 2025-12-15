@@ -146,7 +146,7 @@ services:
     env_file:
       - ./secrets/blackberry/music-download.env
     environment:
-      APPLE_MUSIC_DOWNLOAD_URL: "http://apple-music-api:8000"
+      APPLE_MUSIC_DOWNLOAD_URL: "http://apple-music-api:8080"
     volumes:
       - "${SWINGMUSIC_DATA}/music/qobuz:/downloads"
       - "$HOME/.config/qobuz-dl:/qobuz-dl"
