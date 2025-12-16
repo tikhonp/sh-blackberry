@@ -6,9 +6,11 @@ services:
     volumes:
       - "./secrets/copyparty.conf:/cfg/copyparty.conf:ro"
 
+      - "${COPYPARTY_DATA}/share:/share"
+
+      - "${COPYPARTY_DATA}/data:/w"
       - "${SWINGMUSIC_DATA}/music:/music"
       - "${SWINGMUSIC_DATA}/config/swingmusic:/swingmusic"
-      - "${COPYPARTY_DATA}:/w"
     env_file: 
       - .env
     environment:
