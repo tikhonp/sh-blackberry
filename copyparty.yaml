@@ -6,7 +6,8 @@ services:
     volumes:
       - "./secrets/copyparty.conf:/cfg/copyparty.conf:ro"
 
-      - "${COPYPARTY_DATA}/share:/share"
+      - "${COPYPARTY_DATA}/share/:/share/"
+      - "${COPYPARTY_DATA}/copyparty-db/:/cfg/copyparty/"
 
       - "${COPYPARTY_DATA}/data:/w"
       - "${SWINGMUSIC_DATA}/music:/music"
