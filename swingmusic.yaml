@@ -4,7 +4,7 @@ services:
     container_name: swingmusic
     restart: unless-stopped
     volumes:
-      - "${SWINGMUSIC_DATA}/music:/music:ro"
+      - "${SWINGMUSIC_DATA}/music:/music"
       - "${SWINGMUSIC_DATA}/config:/config"
     env_file: 
       - .env
