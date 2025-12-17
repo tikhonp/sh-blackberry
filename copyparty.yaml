@@ -1,6 +1,6 @@
 services:
   copyparty:
-    image: copyparty/dj:${COPYPARTY_V}
+    image: copyparty/dj:1.19.23
     container_name: copyparty
     restart: unless-stopped
     volumes:
