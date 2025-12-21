@@ -161,7 +161,7 @@ services:
       - apple-music-api
 
   apple-music-wrapper:
-    image: tikhonp/apple-music-wrapper
+    image: ghcr.io/tikhonp/wrapper:latest
     container_name: apple-music-wrapper
     restart: unless-stopped
     environment:
