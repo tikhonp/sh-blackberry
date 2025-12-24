@@ -198,3 +198,46 @@ services:
         max-file: "10"
     labels:
       - dev.dozzle.group=swingmusic
+  
+  musicbrainz-picard:
+    image: jlesage/musicbrainz-picard
+    container_name: musicbrainz-picard
+    restart: unless-stopped
+    expose:
+      - "5800"
+    volumes:
+      - "${SWINGMUSIC_DATA}/picard/:/config/"
+      - "${SWINGMUSIC_DATA}/music/:/storage/"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "10"
+    labels:
+      - dev.dozzle.group=swingmusic
+    # devices:
+    #   - "/dev/sr0:/dev/sr0"
+
+  ssht-musicbrainz-picard:
+    image: jnovack/autossh:${AUTOSSH_V}
+    container_name: ssht-musicbrainz-picard
+    restart: unless-stopped
+    env_file: 
+      - ./secrets/ssh-tunnel.env
+      - .env
+    environment:
+      - SSH_OPTIONS=-o UserKnownHostsFile=/dev/null
+      - SSH_TUNNEL_PORT=10008
+      - SSH_TARGET_HOST=musicbrainz-picard
+      - SSH_TARGET_PORT=5800
+    volumes:
+      - "./secrets/ssh_key:/id_rsa:ro"
+    depends_on:
+      - musicbrainz-picard
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "10"
+    labels:
+      - dev.dozzle.group=swingmusic
