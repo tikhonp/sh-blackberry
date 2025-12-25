@@ -204,8 +204,9 @@ services:
     container_name: musicbrainz-picard
     restart: unless-stopped
     environment:
-      - PUID=1000
-      - PGID=1000
+      - USER_ID=1000
+      - GROUP_ID=1000
+      - TZ=Europe/Moscow
     expose:
       - "5800"
     volumes:
