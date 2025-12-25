@@ -200,18 +200,19 @@ services:
       - dev.dozzle.group=swingmusic
   
   musicbrainz-picard:
-    image: jlesage/musicbrainz-picard
+    image: jlesage/musicbrainz-picard:v25.12.3
     container_name: musicbrainz-picard
     restart: unless-stopped
     environment:
       - USER_ID=1000
       - GROUP_ID=1000
       - TZ=Europe/Moscow
+      - DARK_MODE=1
     expose:
       - "5800"
     volumes:
       - "${SWINGMUSIC_DATA}/picard:/config"
-      - "${SWINGMUSIC_DATA}/music:/storage"
+      - "${SWINGMUSIC_DATA}/music:/music"
     logging:
       driver: "json-file"
       options:
@@ -219,6 +220,7 @@ services:
         max-file: "10"
     labels:
       - dev.dozzle.group=swingmusic
+    # Uncomment the following line to give Picard access to CD-ROM drive
     # devices:
     #   - "/dev/sr0:/dev/sr0"
 
