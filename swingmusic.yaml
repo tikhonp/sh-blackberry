@@ -203,11 +203,14 @@ services:
     image: jlesage/musicbrainz-picard
     container_name: musicbrainz-picard
     restart: unless-stopped
+    environment:
+      - PUID=1000
+      - PGID=1000
     expose:
       - "5800"
     volumes:
-      - "${SWINGMUSIC_DATA}/picard/:/config/"
-      - "${SWINGMUSIC_DATA}/music/:/storage/"
+      - "${SWINGMUSIC_DATA}/picard:/config"
+      - "${SWINGMUSIC_DATA}/music:/storage"
     logging:
       driver: "json-file"
       options:
