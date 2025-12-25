@@ -207,7 +207,7 @@ services:
       - USER_ID=1000
       - GROUP_ID=1000
       - TZ=Europe/Moscow
-      - DARK_MODE=1
+      - DARK_MODE=0
     expose:
       - "5800"
     volumes:
