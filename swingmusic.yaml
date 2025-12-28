@@ -94,7 +94,7 @@ services:
       - dev.dozzle.group=swingmusic
 
   metadata-remote:
-    image: ghcr.io/wow-signal-dev/metadata-remote:${METADATA_REMOTE_V}
+    image: ghcr.io/wow-signal-dev/metadata-remote:v1.2.0
     container_name: metadata-remote
     restart: unless-stopped
     volumes:
