@@ -140,7 +140,7 @@ services:
       - dev.dozzle.group=swingmusic
 
   music-download-bot:
-    image: ghcr.io/tikhonp/music-download-bot:v1.1
+    image: ghcr.io/tikhonp/music-download-bot:v1.0
     container_name: music-download-bot
     restart: unless-stopped
     env_file:
@@ -181,7 +181,7 @@ services:
       - dev.dozzle.group=swingmusic
 
   apple-music-api:
-    image: ghcr.io/tikhonp/apple-music-dl-http-wrapper:v1.0
+    image: ghcr.io/tikhonp/apple-music-dl-http-wrapper:v1.1
     container_name: apple-music-api
     restart: unless-stopped
     expose:
