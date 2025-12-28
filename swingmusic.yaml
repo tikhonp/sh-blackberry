@@ -8,6 +8,9 @@ services:
       - "${SWINGMUSIC_DATA}/config:/config"
     env_file: 
       - .env
+    environment:
+      - PUID=10001
+      - PGID=10001
     expose:
       - 1970
     logging:
