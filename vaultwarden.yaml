@@ -1,7 +1,7 @@
 services:
   vaultwarden:
     container_name: vaultwarden
-    image: vaultwarden/server:1.35.0
+    image: vaultwarden/server:1.35.1
     environment:
       DOMAIN: "https://secrets.tikhonnnnn.com"
     volumes:
