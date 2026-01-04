@@ -177,9 +177,12 @@ services:
       - dev.dozzle.group=swingmusic
 
   apple-music-api:
-    image: ghcr.io/tikhonp/apple-music-dl-http-wrapper:v1.1
+    image: ghcr.io/tikhonp/apple-music-dl-http-wrapper:v1.1.5
     container_name: apple-music-api
     restart: unless-stopped
+    environment:
+      - PUID=10001
+      - PGID=10001
     expose:
       - "8080"
     volumes:
