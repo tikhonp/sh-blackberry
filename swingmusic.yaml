@@ -45,25 +45,18 @@ services:
     labels:
       - dev.dozzle.group=swingmusic
 
-  swingsonic:
-    image: ghcr.io/prince527github/swingsonic:2.2.1
-    container_name: swingsonic
+  openswingsonic:
+    image: ghcr.io/tikhonp/openswingsonic:latest
+    container_name: openswingsonic
     restart: unless-stopped
     env_file: 
       - ./secrets/blackberry/swingmusic.env
       - .env
     environment:
-      - SERVER_PORT=3000
-      - SERVER_URL=https://api.music.tikhonnnnn.com
-      - SERVER_API_SUBSONIC_ENABLE=true 
-      - SERVER_API_SUBSONIC_OPTIONS_ZW=true # Enable of Zero Width Character Hack
-      - SERVER_API_JELLYFIN_ENABLE=false 
-      - SERVER_API_EUTERPE=false
-      - MUSIC=http://swingmusic:1970
+      - SWINGSONIC_BASE_URL=https://music.tikhonnnnn.com
+      - CRED_PROVIDER=env
     depends_on:
       - swingmusic
-    expose:
-      - 3000
     logging:
       driver: "json-file"
       options:
@@ -72,9 +65,9 @@ services:
     labels:
       - dev.dozzle.group=swingmusic
       
-  ssht-swingsonic:
+  ssht-openswingsonic:
     image: jnovack/autossh:${AUTOSSH_V}
-    container_name: ssht-swingsonic
+    container_name: ssht-openswingsonic
     restart: unless-stopped
     env_file: 
       - ./secrets/ssh-tunnel.env
@@ -82,12 +75,12 @@ services:
     environment:
       - SSH_OPTIONS=-o UserKnownHostsFile=/dev/null
       - SSH_TUNNEL_PORT=10005
-      - SSH_TARGET_HOST=swingsonic
+      - SSH_TARGET_HOST=openswingsonic
       - SSH_TARGET_PORT=3000
     volumes:
       - "./secrets/ssh_key:/id_rsa:ro"
     depends_on:
-      - swingsonic
+      - openswingsonic
     logging:
       driver: "json-file"
       options:
@@ -133,7 +126,7 @@ services:
     volumes:
       - "./secrets/ssh_key:/id_rsa:ro"
     depends_on:
-      - swingsonic
+      - swingmusic
     logging:
       driver: "json-file"
       options:
