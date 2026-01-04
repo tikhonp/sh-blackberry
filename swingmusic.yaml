@@ -76,7 +76,7 @@ services:
       - SSH_OPTIONS=-o UserKnownHostsFile=/dev/null
       - SSH_TUNNEL_PORT=10005
       - SSH_TARGET_HOST=openswingsonic
-      - SSH_TARGET_PORT=3000
+      - SSH_TARGET_PORT=1991
     volumes:
       - "./secrets/ssh_key:/id_rsa:ro"
     depends_on:
