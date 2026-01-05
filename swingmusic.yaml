@@ -199,7 +199,7 @@ services:
       - dev.dozzle.group=swingmusic
   
   musicbrainz-picard:
-    image: jlesage/musicbrainz-picard:v25.12.3
+    image: jlesage/musicbrainz-picard:v26.01.1
     container_name: musicbrainz-picard
     restart: unless-stopped
     environment:
