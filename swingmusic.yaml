@@ -55,6 +55,7 @@ services:
     environment:
       - SWINGSONIC_BASE_URL=https://music.tikhonnnnn.com
       - CRED_PROVIDER=env
+      - JSON_LOG=true
     depends_on:
       - swingmusic
     logging:
