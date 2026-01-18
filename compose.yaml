@@ -5,3 +5,4 @@ include:
   - immich.yaml
   - vaultwarden.yaml
   - swingmusic.yaml
+  - scrutiny.yaml
