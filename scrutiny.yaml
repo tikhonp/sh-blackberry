@@ -82,7 +82,6 @@ services:
     restart: unless-stopped
     cap_add:
       - SYS_RAWIO
-      - SYS_ADMIN
     volumes:
       - '/run/udev:/run/udev:ro'
     environment:
@@ -96,7 +95,6 @@ services:
         condition: service_healthy
     devices:
       - "/dev/sda"
-      - "/dev/nvme0n1"
     logging:
       driver: "json-file"
       options:
