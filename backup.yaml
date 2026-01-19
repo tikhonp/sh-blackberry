@@ -17,13 +17,17 @@ services:
 
       - "${SWINGMUSIC_DATA}:/source-swingmusic:ro"
       - "${BACKUP_SWINGMUSIC_LOCAL}:/destination-swingmusic"
+
+      - "${SCRUTINY_DATA}:/source-scrutiny:ro"
+      - "${BACKUP_SCRUTINY_LOCAL}:/destination-scrutiny"
     env_file: 
       - .env
     environment:
-      - CRON_TASK_1=0 3 * * * echo "Starting backup VAULTWARDEN..." && rsync -a --delete --whole-file --stats /source-vaultwarden/ /destination-vaultwarden/
-      - CRON_TASK_2=15 3 * * * echo "Starting backup COPYPARTY..." && rsync -a --delete --whole-file --stats /source-copyparty/ /destination-copyparty/
-      - CRON_TASK_3=30 3 * * * echo "Starting backup IMMICH..." && rsync -a --delete --whole-file --stats /source-immich/ /destination-immich/
-      - CRON_TASK_4=45 3 * * * echo "Starting backup SWINGMUSIC..." && rsync -a --delete --whole-file --stats /source-swingmusic/ /destination-swingmusic/
+      - CRON_TASK_1=0 2 * * * echo "Starting backup VAULTWARDEN..." && rsync -a --delete --whole-file --stats /source-vaultwarden/ /destination-vaultwarden/
+      - CRON_TASK_2=15 2 * * * echo "Starting backup COPYPARTY..." && rsync -a --delete --whole-file --stats /source-copyparty/ /destination-copyparty/
+      - CRON_TASK_3=30 2 * * * echo "Starting backup IMMICH..." && rsync -a --delete --whole-file --stats /source-immich/ /destination-immich/
+      - CRON_TASK_4=45 2 * * * echo "Starting backup SWINGMUSIC..." && rsync -a --delete --whole-file --stats /source-swingmusic/ /destination-swingmusic/
+      - CRON_TASK_4=0 3 * * * echo "Starting backup SCRUTINY..." && rsync -a --delete --whole-file --stats /source-scrutiny/ /destination-scrutiny/
     restart: unless-stopped
     logging:
       driver: "json-file"
@@ -45,7 +49,7 @@ services:
       - .env
     environment:
       # - CRON_TASK_1=0 4 * * * echo "Starting backup remote blueberry..." && rsync -e 'ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no' -az --delete --numeric-ids --stats /data/ root@blueberry-ts-backup:/data/
-      - CRON_TASK_2=0 5 * * * echo "Starting backup remote apple..." && rsync -e 'ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no' -az --delete --numeric-ids --stats /data/ root@apple-ts-backup:/data/
+      - CRON_TASK_2=0 4 * * * echo "Starting backup remote apple..." && rsync -e 'ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no' -az --delete --numeric-ids --stats /data/ root@apple-ts-backup:/data/
     network_mode: service:ts-backup
     restart: unless-stopped
     depends_on:
