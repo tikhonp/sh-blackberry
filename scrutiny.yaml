@@ -29,7 +29,7 @@ services:
     expose:
       - "8080"
     volumes:
-      - "${SCRUTINY_DATA}/config:/opt/scrutiny/config"
+      - "./secrets/scrutiny.yaml:/opt/scrutiny/config/scrutiny.yaml:ro"
     env_file:
       - .env
     environment:
