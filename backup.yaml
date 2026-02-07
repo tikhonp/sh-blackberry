@@ -27,7 +27,7 @@ services:
       - CRON_TASK_2=15 2 * * * echo "Starting backup COPYPARTY..." && rsync -a --delete --whole-file --stats /source-copyparty/ /destination-copyparty/
       - CRON_TASK_3=30 2 * * * echo "Starting backup IMMICH..." && rsync -a --delete --whole-file --stats /source-immich/ /destination-immich/
       - CRON_TASK_4=45 2 * * * echo "Starting backup SWINGMUSIC..." && rsync -a --delete --whole-file --stats /source-swingmusic/ /destination-swingmusic/
-      - CRON_TASK_4=0 3 * * * echo "Starting backup SCRUTINY..." && rsync -a --delete --whole-file --stats /source-scrutiny/ /destination-scrutiny/
+      - CRON_TASK_5=0 3 * * * echo "Starting backup SCRUTINY..." && rsync -a --delete --whole-file --stats /source-scrutiny/ /destination-scrutiny/
     restart: unless-stopped
     logging:
       driver: "json-file"
