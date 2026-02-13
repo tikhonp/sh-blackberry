@@ -2,9 +2,9 @@ services:
   watchtower:
     container_name: watchtower
     image: nickfedor/watchtower:1
+    env_file: ./secrets/watchtower.env
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
-      - "/etc/localtime:/etc/localtime:ro"
     command: --cleanup --remove-volumes --schedule "0 0 4 * * *"
     logging:
       driver: "json-file"
