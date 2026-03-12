@@ -53,7 +53,7 @@ services:
       - ./secrets/blackberry/swingmusic.env
       - .env
     environment:
-      - SWINGSONIC_BASE_URL=https://music.tikhonnnnn.com
+      - SWINGSONIC_BASE_URL=http://swingmusic:1970
       - CRED_PROVIDER=env
       - JSON_LOG=true
     depends_on:
