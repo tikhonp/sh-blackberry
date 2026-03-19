@@ -102,3 +102,4 @@ services:
         max-file: "10"
     labels:
       - dev.dozzle.group=scrutiny
+    profiles: ["disk-enabled"]
