@@ -25,6 +25,7 @@ services:
       - dev.dozzle.group=immich
     ports:
       - '2283:2283'
+    profiles: ["disk-enabled"]
 
   immich-machine-learning:
     container_name: immich-machine-learning
@@ -44,6 +45,7 @@ services:
         max-file: "10"
     labels:
       - dev.dozzle.group=immich
+    profiles: ["disk-enabled"]
 
   redis:
     container_name: immich_redis
@@ -58,6 +60,7 @@ services:
         max-file: "10"
     labels:
       - dev.dozzle.group=immich
+    profiles: ["disk-enabled"]
 
   database:
     container_name: immich_postgres
@@ -78,6 +81,7 @@ services:
         max-file: "10"
     labels:
       - dev.dozzle.group=immich
+    profiles: ["disk-enabled"]
 
   ssht-immich:
     image: jnovack/autossh:${AUTOSSH_V}
@@ -103,6 +107,7 @@ services:
       options:
         max-size: "100m"
         max-file: "10"
+    profiles: ["disk-enabled"]
 
 volumes:
   model-cache:

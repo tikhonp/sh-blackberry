@@ -36,6 +36,7 @@ services:
         max-file: "10"
     labels:
       - dev.dozzle.group=backup
+    profiles: ["disk-enabled"]
 
   backup-to-remote-server:
     image: eeacms/rsync:${RSYNC_V}
@@ -61,6 +62,7 @@ services:
         max-file: "10"
     labels:
       - dev.dozzle.group=backup
+    profiles: ["disk-enabled"]
 
   ts-backup:
     image: tailscale/tailscale:${TAILSCALE_V}
@@ -87,6 +89,7 @@ services:
         max-file: "10"
     labels:
       - dev.dozzle.group=backup
+    profiles: ["disk-enabled"]
 
 volumes:
   ts-backup-state:
