@@ -8,6 +8,9 @@ services:
       - "${SWINGMUSIC_DATA}/config:/config"
     env_file: 
       - .env
+      # i use tailscale env here because it contains
+      # http_proxy and https_proxy variables that are needed for lastfm scrobbler to work properly
+      - ./secrets/tailscale.env
     environment:
       - PUID=10001
       - PGID=10001
