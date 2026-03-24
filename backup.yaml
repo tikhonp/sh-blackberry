@@ -45,7 +45,7 @@ services:
     volumes:
       - "/etc/localtime:/etc/localtime:ro"
       - "${LOCAL_BACKUP_VOLUME}:/data/:ro"
-      - "./secrets/ssh_key:/root/.ssh/id_rsa:ro"
+      - "./secrets/ssh-key:/root/.ssh/id_rsa:ro"
     env_file: 
       - .env
     environment:
@@ -69,8 +69,9 @@ services:
     container_name: ts-backup
     hostname: blackberry-ts-backup
     env_file: 
-      - secrets/tailscale.env
       - .env
+      - ./secrets/tailscale.env
+      - ./secrets/proxy.env
     environment:
       - TS_STATE_DIR=/var/lib/tailscale
       - TS_USERSPACE=false

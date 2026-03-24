@@ -33,8 +33,9 @@ services:
     container_name: ts-dozzle
     hostname: blackberry-ts-dozzle
     env_file: 
-      - secrets/tailscale.env
       - .env
+      - ./secrets/tailscale.env
+      - ./secrets/proxy.env
     environment:
       - TS_STATE_DIR=/var/lib/tailscale
       - TS_USERSPACE=false

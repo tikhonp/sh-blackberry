@@ -8,9 +8,7 @@ services:
       - "${SWINGMUSIC_DATA}/config:/config"
     env_file: 
       - .env
-      # i use tailscale env here because it contains
-      # http_proxy and https_proxy variables that are needed for lastfm scrobbler to work properly
-      - ./secrets/tailscale.env
+      - ./secrets/proxy.env
     environment:
       - PUID=10001
       - PGID=10001
@@ -37,7 +35,7 @@ services:
       - SSH_TARGET_HOST=swingmusic
       - SSH_TARGET_PORT=1970
     volumes:
-      - "./secrets/ssh_key:/id_rsa:ro"
+      - "./secrets/ssh-key:/id_rsa:ro"
     depends_on:
       - swingmusic
     logging:
@@ -83,7 +81,7 @@ services:
       - SSH_TARGET_HOST=openswingsonic
       - SSH_TARGET_PORT=1991
     volumes:
-      - "./secrets/ssh_key:/id_rsa:ro"
+      - "./secrets/ssh-key:/id_rsa:ro"
     depends_on:
       - openswingsonic
     logging:
@@ -129,7 +127,7 @@ services:
       - SSH_TARGET_HOST=metadata-remote
       - SSH_TARGET_PORT=8338
     volumes:
-      - "./secrets/ssh_key:/id_rsa:ro"
+      - "./secrets/ssh-key:/id_rsa:ro"
     depends_on:
       - swingmusic
     logging:
@@ -192,7 +190,7 @@ services:
       - "8080"
     volumes:
       - "${SWINGMUSIC_DATA}/music/apple-music/:/downloads/"
-      - ./secrets/apple-music-config.yaml:/app/config.yaml
+      - ./secrets/blackberry/apple-music-config.yaml:/app/config.yaml
     depends_on:
       - apple-music-wrapper
     logging:
@@ -233,7 +231,7 @@ services:
     container_name: ssht-musicbrainz-picard
     restart: unless-stopped
     env_file: 
-      - ./secrets/ssh-tunnel.env
+      - ./secrets/proxy.env
       - .env
     environment:
       - SSH_OPTIONS=-o UserKnownHostsFile=/dev/null
@@ -241,7 +239,7 @@ services:
       - SSH_TARGET_HOST=musicbrainz-picard
       - SSH_TARGET_PORT=5800
     volumes:
-      - "./secrets/ssh_key:/id_rsa:ro"
+      - "./secrets/ssh-key:/id_rsa:ro"
     depends_on:
       - musicbrainz-picard
     logging:

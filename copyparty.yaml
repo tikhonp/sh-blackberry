@@ -4,7 +4,7 @@ services:
     container_name: copyparty
     restart: unless-stopped
     volumes:
-      - "./secrets/copyparty.conf:/cfg/copyparty.conf:ro"
+      - "./secrets/blackberry/copyparty.conf:/cfg/copyparty.conf:ro"
 
       - "${COPYPARTY_DATA}/share/:/share/"
       - "${COPYPARTY_DATA}/copyparty-db/:/cfg/copyparty/"
@@ -45,7 +45,7 @@ services:
       - SSH_TARGET_HOST=copyparty
       - SSH_TARGET_PORT=3923
     volumes:
-      - "./secrets/ssh_key:/id_rsa:ro"
+      - "./secrets/ssh-key:/id_rsa:ro"
     depends_on:
       - copyparty
     logging:

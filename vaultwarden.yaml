@@ -32,7 +32,7 @@ services:
       - SSH_TARGET_HOST=vaultwarden
       - SSH_TARGET_PORT=80
     volumes:
-      - "./secrets/ssh_key:/id_rsa:ro"
+      - "./secrets/ssh-key:/id_rsa:ro"
     depends_on:
       - vaultwarden
     logging:
