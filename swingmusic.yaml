@@ -222,6 +222,8 @@ services:
         max-file: "10"
     labels:
       - dev.dozzle.group=swingmusic
+    env_file: 
+      - ./secrets/proxy.env
     # Uncomment the following line to give Picard access to CD-ROM drive
     # devices:
     #   - "/dev/sr0:/dev/sr0"
@@ -231,7 +233,7 @@ services:
     container_name: ssht-musicbrainz-picard
     restart: unless-stopped
     env_file: 
-      - ./secrets/proxy.env
+      - ./secrets/ssh-tunnel.env
       - .env
     environment:
       - SSH_OPTIONS=-o UserKnownHostsFile=/dev/null
