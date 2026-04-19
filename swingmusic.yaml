@@ -148,7 +148,7 @@ services:
       APPLE_MUSIC_DOWNLOAD_URL: "http://apple-music-api:8080"
     volumes:
       - "${SWINGMUSIC_DATA}/music/qobuz:/downloads"
-      - "$HOME/.config/qobuz-dl:/qobuz-dl"
+      - "${SWINGMUSIC_DATA}/music-downloader-bot:/data"
     logging:
       driver: "json-file"
       options:
