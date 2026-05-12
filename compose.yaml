@@ -8,4 +8,4 @@ include:
   - scrutiny.yaml
   - watchtower.yaml
   - mountaintea.yaml
-  - alcs.yaml
+  # - alcs.yaml
