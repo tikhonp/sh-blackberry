@@ -1,0 +1,112 @@
+services:
+  alcs-server:
+    image: ghcr.io/tikhonp/alcs-server:latest
+    container_name: alcs-server
+    restart: unless-stopped
+    depends_on:
+      alcs-db:
+        condition: service_healthy
+    volumes:
+      - "./secrets/blackberry/alcs-config.pkl:/src/config.pkl:ro"
+    expose:
+      - "9990"
+    env_file: "./secrets/blackberry/alcs.env"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "10"
+    labels:
+      - dev.dozzle.group=alcs
+
+  alcs-worker:
+    image: ghcr.io/tikhonp/alcs-worker:latest
+    container_name: alcs-worker
+    restart: unless-stopped
+    depends_on:
+      alcs-db:
+        condition: service_healthy
+    volumes:
+      - "./secrets/blackberry/alcs-config.pkl:/src/config.pkl:ro"
+    env_file: "./secrets/blackberry/alcs.env"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "10"
+    labels:
+      - dev.dozzle.group=alcs
+
+  alcs-db:
+    image: postgres:17.7
+    container_name: alcs-db
+    restart: unless-stopped
+    volumes:
+      - db-data:/var/lib/postgresql/data
+      - db-backup-data:/tmp/dumps
+    env_file: "./secrets/blackberry/alcs.env"
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-q", "-U", "dummy", "-d", "alcs-db" ]
+      interval: 1s
+      timeout: 5s
+      retries: 5
+    labels:
+      - docker-volume-backup.archive-pre=/bin/sh -c 'pg_dump -U dummy -w --clean --if-exists -d alcs-db > /tmp/dumps/alcs-db.dump'
+      - dev.dozzle.group=alcs
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "10"
+
+  ssht-alcs:
+    image: jnovack/autossh:${AUTOSSH_V}
+    container_name: ssht-alcs
+    restart: unless-stopped
+    env_file: 
+      - ./secrets/ssh-tunnel.env
+      - .env
+    environment:
+      - SSH_OPTIONS=-o UserKnownHostsFile=/dev/null
+      - SSH_TUNNEL_PORT=10001
+      - SSH_TARGET_HOST=alcs-server
+      - SSH_TARGET_PORT=9990
+    volumes:
+      - "./secrets/ssh-key:/id_rsa:ro"
+    depends_on:
+      - alcs-server
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "10"
+    labels:
+      - dev.dozzle.group=alcs
+
+  alcs-backup:
+    image: offen/docker-volume-backup:v2
+    container_name: alcs-backup
+    env_file: "./secrets/blackberry/alcs.env"
+    environment:
+      BACKUP_FILENAME: backup-%Y-%m-%dT%H-%M-%S.tar.gz
+      BACKUP_PRUNING_PREFIX: backup-
+      BACKUP_RETENTION_DAYS: '7'
+    restart: always
+    volumes:
+      - db-backup-data:/backup/db-backup:ro
+      - ${HOME}/backups/alcs:/archive
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "10"
+    labels:
+      - dev.dozzle.group=alcs
+
+volumes:
+  db-data:
+    name: "alcs-db-data"
+    external: true
+  db-backup-data:
+    name: "alcs-db-backup-data"

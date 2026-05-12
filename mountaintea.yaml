@@ -30,7 +30,7 @@ services:
     volumes:
       - "./secrets/ssh-key:/id_rsa:ro"
     depends_on:
-      - copyparty
+      - nginx-mountaintea
     logging:
       driver: "json-file"
       options:
