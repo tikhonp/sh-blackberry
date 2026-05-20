@@ -19,7 +19,7 @@ services:
     labels:
       - dev.dozzle.group=memos
 
-  ssht-vaultwarden:
+  ssht-memos:
     image: jnovack/autossh:${AUTOSSH_V}
     container_name: ssht-memos
     restart: unless-stopped
