@@ -1,0 +1,44 @@
+services:
+  memos:
+    image: neosmemo/memos:stable
+    container_name: memos
+    restart: unless-stopped
+    volumes:
+      - "${MEMOS_DATA}:/var/opt/memos/"
+    environment:
+      MEMOS_PORT: 5230
+      MEMOS_DRIVER: sqlite
+      MEMOS_INSTANCE_URL: https://notes.tikhonnnnn.com
+    expose:
+      - 5230
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "10"
+    labels:
+      - dev.dozzle.group=memos
+
+  ssht-vaultwarden:
+    image: jnovack/autossh:${AUTOSSH_V}
+    container_name: ssht-memos
+    restart: unless-stopped
+    env_file: 
+      - ./secrets/ssh-tunnel.env
+      - .env
+    environment:
+      - SSH_OPTIONS=-o UserKnownHostsFile=/dev/null
+      - SSH_TUNNEL_PORT=10010
+      - SSH_TARGET_HOST=memos
+      - SSH_TARGET_PORT=5230
+    volumes:
+      - "./secrets/ssh-key:/id_rsa:ro"
+    depends_on:
+      - memos
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "10"
+    labels:
+      - dev.dozzle.group=memos
