@@ -249,3 +249,44 @@ services:
         max-file: "10"
     labels:
       - dev.dozzle.group=swingmusic
+
+  navidrome:
+    image: deluan/navidrome:latest
+    container_name: navidrome
+    restart: unless-stopped
+    volumes:
+      - "${SWINGMUSIC_DATA}/music:/music:ro"
+      - "${SWINGMUSIC_DATA}/navidrome:/navidrome"
+    expose:
+      - 4533
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "10"
+    labels:
+      - dev.dozzle.group=swingmusic
+
+  ssht-navidrome:
+    image: jnovack/autossh:${AUTOSSH_V}
+    container_name: ssht-navidrome
+    restart: unless-stopped
+    env_file: 
+      - ./secrets/ssh-tunnel.env
+      - .env
+    environment:
+      - SSH_OPTIONS=-o UserKnownHostsFile=/dev/null
+      - SSH_TUNNEL_PORT=10011
+      - SSH_TARGET_HOST=navidrome
+      - SSH_TARGET_PORT=4533
+    volumes:
+      - "./secrets/ssh-key:/id_rsa:ro"
+    depends_on:
+      - navidrome
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "10"
+    labels:
+      - dev.dozzle.group=swingmusic
