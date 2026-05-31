@@ -254,6 +254,8 @@ services:
     image: deluan/navidrome:latest
     container_name: navidrome
     restart: unless-stopped
+    env_file:
+      - "./secrets/blackberry/navidrome.env"
     volumes:
       - "${SWINGMUSIC_DATA}/music:/music:ro"
       - "${SWINGMUSIC_DATA}/navidrome:/navidrome"
