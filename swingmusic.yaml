@@ -256,6 +256,7 @@ services:
     restart: unless-stopped
     env_file:
       - "./secrets/blackberry/navidrome.env"
+      - "./secrets/proxy.env"
     volumes:
       - "${SWINGMUSIC_DATA}/music:/music:ro"
       - "${SWINGMUSIC_DATA}/navidrome:/navidrome"
