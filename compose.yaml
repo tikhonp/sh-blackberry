@@ -9,4 +9,4 @@ include:
   - watchtower.yaml
   - mountaintea.yaml
   - usememos.yaml
-  # - alcs.yaml
+  - alcs.yaml

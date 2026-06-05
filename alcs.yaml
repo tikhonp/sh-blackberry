@@ -6,8 +6,6 @@ services:
     depends_on:
       alcs-db:
         condition: service_healthy
-    volumes:
-      - "./secrets/blackberry/alcs-config.pkl:/src/config.pkl:ro"
     expose:
       - "9990"
     env_file: "./secrets/blackberry/alcs.env"
@@ -26,8 +24,6 @@ services:
     depends_on:
       alcs-db:
         condition: service_healthy
-    volumes:
-      - "./secrets/blackberry/alcs-config.pkl:/src/config.pkl:ro"
     env_file: "./secrets/blackberry/alcs.env"
     logging:
       driver: "json-file"
@@ -38,7 +34,7 @@ services:
       - dev.dozzle.group=alcs
 
   alcs-db:
-    image: postgres:17.7
+    image: postgres:18.4
     container_name: alcs-db
     restart: unless-stopped
     volumes:
@@ -107,6 +103,5 @@ services:
 volumes:
   db-data:
     name: "alcs-db-data"
-    external: true
   db-backup-data:
     name: "alcs-db-backup-data"
