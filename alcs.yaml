@@ -38,7 +38,7 @@ services:
     container_name: alcs-db
     restart: unless-stopped
     volumes:
-      - db-data:/var/lib/postgresql/data
+      - db-data:/var/lib/postgresql
       - db-backup-data:/tmp/dumps
     env_file: "./secrets/blackberry/alcs.env"
     healthcheck:
