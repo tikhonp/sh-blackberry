@@ -38,8 +38,8 @@ services:
     container_name: alcs-db
     restart: unless-stopped
     volumes:
-      - db-data:/var/lib/postgresql
-      - db-backup-data:/tmp/dumps
+      - "${ALCS_DATA}/db/:/var/lib/postgresql/"
+      - "${ALCS_DATA}/backups/:/tmp/dumps/"
     env_file: "./secrets/blackberry/alcs.env"
     healthcheck:
       test: [ "CMD", "pg_isready", "-q", "-U", "dummy", "-d", "alcs-db" ]
@@ -89,9 +89,9 @@ services:
       BACKUP_RETENTION_DAYS: '7'
     restart: always
     volumes:
-      - db-backup-data:/backup/db-backup:ro
-      - ${HOME}/backups/alcs:/archive
-      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - "${ALCS_DATA}/db/:/backup/db-backup/:ro"
+      - "${HOME}/backups/alcs:/archive"
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
     logging:
       driver: "json-file"
       options:
@@ -99,9 +99,3 @@ services:
         max-file: "10"
     labels:
       - dev.dozzle.group=alcs
-
-volumes:
-  db-data:
-    name: "alcs-db-data"
-  db-backup-data:
-    name: "alcs-db-backup-data"
