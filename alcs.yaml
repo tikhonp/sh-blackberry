@@ -89,7 +89,7 @@ services:
       BACKUP_RETENTION_DAYS: '7'
     restart: always
     volumes:
-      - "${ALCS_DATA}/db/:/backup/db-backup/:ro"
+      - "${ALCS_DATA}/backups/:/backup/db-backup/:ro"
       - "${HOME}/backups/alcs:/archive"
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
     logging:
