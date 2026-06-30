@@ -248,3 +248,27 @@ services:
         max-file: "10"
     labels:
       - dev.dozzle.group=audiomuse
+
+  ssht-audiomuse:
+    image: jnovack/autossh:${AUTOSSH_V}
+    container_name: ssht-audiomuse
+    restart: unless-stopped
+    env_file: 
+      - ./secrets/ssh-tunnel.env
+      - .env
+    environment:
+      - SSH_OPTIONS=-o UserKnownHostsFile=/dev/null
+      - SSH_TUNNEL_PORT=10004
+      - SSH_TARGET_HOST=audiomuse-flask
+      - SSH_TARGET_PORT=8000
+    volumes:
+      - "./secrets/ssh-key:/id_rsa:ro"
+    depends_on:
+      - audiomuse-flask
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "10"
+    labels:
+      - dev.dozzle.group=audiomuse
