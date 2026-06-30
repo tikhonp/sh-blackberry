@@ -248,24 +248,3 @@ services:
         max-file: "10"
     labels:
       - dev.dozzle.group=audiomuse
-
-  audiomuse-backup:
-    image: offen/docker-volume-backup:v2
-    container_name: audiomuse-backup
-    env_file: "./secrets/blackberry/audiomuse.env"
-    environment:
-      BACKUP_FILENAME: backup-%Y-%m-%dT%H-%M-%S.tar.gz
-      BACKUP_PRUNING_PREFIX: backup-
-      BACKUP_RETENTION_DAYS: '7'
-    restart: always
-    volumes:
-      - "${SWINGMUSIC_DATA}/audiomuse/backups/:/backup/db-backup/:ro"
-      - "${HOME}/backups/audiomuse:/archive"
-      - "/var/run/docker.sock:/var/run/docker.sock:ro"
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "100m"
-        max-file: "10"
-    labels:
-      - dev.dozzle.group=audiomuse
