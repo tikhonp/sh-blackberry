@@ -16,7 +16,7 @@ services:
         max-size: "100m"
         max-file: "10"
     labels:
-      - dev.dozzle.group=swingmusic
+      - dev.dozzle.group=music
     depends_on:
       - apple-music-api
 
@@ -38,7 +38,7 @@ services:
         max-size: "100m"
         max-file: "10"
     labels:
-      - dev.dozzle.group=swingmusic
+      - dev.dozzle.group=music
 
   apple-music-api:
     image: ghcr.io/tikhonp/apple-music-dl-http-wrapper:v1.1.5
@@ -60,7 +60,7 @@ services:
         max-size: "100m"
         max-file: "10"
     labels:
-      - dev.dozzle.group=swingmusic
+      - dev.dozzle.group=music
   
   musicbrainz-picard:
     image: jlesage/musicbrainz-picard:latest
@@ -82,7 +82,7 @@ services:
         max-size: "100m"
         max-file: "10"
     labels:
-      - dev.dozzle.group=swingmusic
+      - dev.dozzle.group=music
     # Uncomment the following line to give Picard access to CD-ROM drive
     # devices:
     #   - "/dev/sr0:/dev/sr0"
@@ -109,7 +109,7 @@ services:
         max-size: "100m"
         max-file: "10"
     labels:
-      - dev.dozzle.group=swingmusic
+      - dev.dozzle.group=music
 
   navidrome:
     image: deluan/navidrome:latest
@@ -129,7 +129,7 @@ services:
         max-size: "100m"
         max-file: "10"
     labels:
-      - dev.dozzle.group=swingmusic
+      - dev.dozzle.group=music
 
   ssht-navidrome:
     image: jnovack/autossh:${AUTOSSH_V}
@@ -153,7 +153,7 @@ services:
         max-size: "100m"
         max-file: "10"
     labels:
-      - dev.dozzle.group=swingmusic
+      - dev.dozzle.group=music
 
   audiomuse-redis:
     image: redis:7-alpine
@@ -182,14 +182,13 @@ services:
       interval: 1s
       timeout: 5s
       retries: 5
-    labels:
-      - docker-volume-backup.archive-pre=/bin/sh -c 'pg_dump -U audiomuse -w --clean --if-exists -d audiomusedb > /tmp/dumps/audiomuse-db.dump'
-      - dev.dozzle.group=audiomuse
     logging:
       driver: "json-file"
       options:
         max-size: "100m"
         max-file: "10"
+    labels:
+      - dev.dozzle.group=audiomuse
 
   audiomuse-flask:
     image: ghcr.io/neptunehub/audiomuse-ai:latest
