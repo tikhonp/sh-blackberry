@@ -120,7 +120,7 @@ services:
       - "./secrets/proxy.env"
     volumes:
       - "${SWINGMUSIC_DATA}/music:/music:ro"
-      - "${SWINGMUSIC_DATA}/navidrome:/navidrome"
+      - "${SWINGMUSIC_DATA}/navidrome:/data"
     expose:
       - 4533
     logging:
@@ -154,3 +154,118 @@ services:
         max-file: "10"
     labels:
       - dev.dozzle.group=swingmusic
+
+  audiomuse-redis:
+    image: redis:7-alpine
+    container_name: audiomuse-redis
+    restart: unless-stopped
+    volumes:
+      - "${SWINGMUSIC_DATA}/audiomuse/redis:/data"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "10"
+    labels:
+      - dev.dozzle.group=audiomuse
+
+  audiomuse-postgres:
+    image: postgres:15-alpine
+    container_name: audiomuse-postgres
+    restart: unless-stopped
+    env_file: "./secrets/blackberry/audiomuse.env"
+    volumes:
+      - "${SWINGMUSIC_DATA}/audiomuse/postgres:/var/lib/postgresql/data"
+      - "${SWINGMUSIC_DATA}/audiomuse/backups:/tmp/dumps"
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-q", "-U", "audiomuse", "-d", "audiomusedb" ]
+      interval: 1s
+      timeout: 5s
+      retries: 5
+    labels:
+      - docker-volume-backup.archive-pre=/bin/sh -c 'pg_dump -U audiomuse -w --clean --if-exists -d audiomusedb > /tmp/dumps/audiomuse-db.dump'
+      - dev.dozzle.group=audiomuse
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "10"
+
+  audiomuse-flask:
+    image: ghcr.io/neptunehub/audiomuse-ai:latest
+    container_name: audiomuse-ai-flask-app
+    restart: unless-stopped
+    env_file: "./secrets/blackberry/audiomuse.env"
+    environment:
+      SERVICE_TYPE: flask
+      POSTGRES_HOST: audiomuse-postgres
+      POSTGRES_PORT: "5432"
+      REDIS_URL: "redis://audiomuse-redis:6379/0"
+      TEMP_DIR: /app/temp_audio
+      MEDIASERVER_TYPE: navidrome
+      NAVIDROME_URL: "http://navidrome:4533"
+    expose:
+      - "8000"
+    depends_on:
+      audiomuse-postgres:
+        condition: service_healthy
+      audiomuse-redis:
+        condition: service_started
+    volumes:
+      - "${SWINGMUSIC_DATA}/audiomuse/temp-flask:/app/temp_audio"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "10"
+    labels:
+      - dev.dozzle.group=audiomuse
+
+  audiomuse-worker:
+    image: ghcr.io/neptunehub/audiomuse-ai:latest
+    container_name: audiomuse-ai-worker
+    restart: unless-stopped
+    env_file: "./secrets/blackberry/audiomuse.env"
+    environment:
+      SERVICE_TYPE: worker
+      POSTGRES_HOST: audiomuse-postgres
+      POSTGRES_PORT: "5432"
+      REDIS_URL: "redis://audiomuse-redis:6379/0"
+      TEMP_DIR: /app/temp_audio
+      MEDIASERVER_TYPE: navidrome
+      NAVIDROME_URL: "http://navidrome:4533"
+    depends_on:
+      audiomuse-postgres:
+        condition: service_healthy
+      audiomuse-redis:
+        condition: service_started
+    volumes:
+      - "${SWINGMUSIC_DATA}/audiomuse/temp-worker:/app/temp_audio"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "10"
+    labels:
+      - dev.dozzle.group=audiomuse
+
+  audiomuse-backup:
+    image: offen/docker-volume-backup:v2
+    container_name: audiomuse-backup
+    env_file: "./secrets/blackberry/audiomuse.env"
+    environment:
+      BACKUP_FILENAME: backup-%Y-%m-%dT%H-%M-%S.tar.gz
+      BACKUP_PRUNING_PREFIX: backup-
+      BACKUP_RETENTION_DAYS: '7'
+    restart: always
+    volumes:
+      - "${SWINGMUSIC_DATA}/audiomuse/backups/:/backup/db-backup/:ro"
+      - "${HOME}/backups/audiomuse:/archive"
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "10"
+    labels:
+      - dev.dozzle.group=audiomuse
