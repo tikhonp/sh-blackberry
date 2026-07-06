@@ -76,6 +76,7 @@ services:
     volumes:
       - "${SWINGMUSIC_DATA}/picard:/config"
       - "${SWINGMUSIC_DATA}/music:/music"
+      - "${SWINGMUSIC_DATA}/picard-data:/storage"
     logging:
       driver: "json-file"
       options:

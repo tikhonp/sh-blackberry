@@ -1,12 +1,13 @@
 services:
   influxdb:
     image: influxdb:2.2
-    container_name: influxdb
+    container_name: scrutiny-influxdb
     restart: unless-stopped
     expose:
       - "8086"
     volumes:
       - "${SCRUTINY_DATA}/influxdb:/var/lib/influxdb2"
+      - "${SCRUTINY_DATA}/influxdb-alt:/etc/influxdb2"
     env_file:
       - .env
     healthcheck:
