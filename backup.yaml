@@ -50,11 +50,16 @@ services:
       - "/etc/localtime:/etc/localtime:ro"
       - "${LOCAL_BACKUP_VOLUME}:/data/:ro"
       - "./secrets/ssh-key:/root/.ssh/id_rsa:ro"
-    env_file: 
+      - "./backup:/scripts:ro"
+    env_file:
       - .env
     environment:
-      - CRON_TASK_1=0 4 * * * echo "Starting backup remote blueberry..." && rsync -e 'ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no' -az --delete --numeric-ids --stats /data/ root@blueberry-ts-backup:/data/
-      - CRON_TASK_2=0 5 * * * echo "Starting backup remote apple..." && rsync -e 'ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no' -az --delete --numeric-ids --stats /data/ root@apple-ts-backup:/data/
+      # Guardrails for backup-remote.sh: cap deletions per run; keep deleted/overwritten
+      # files in .trash/<date> on the remote for this many days before pruning.
+      - BACKUP_MAX_DELETE=500
+      - BACKUP_TRASH_RETENTION_DAYS=30
+      - CRON_TASK_1=0 4 * * * sh /scripts/backup-remote.sh blueberry root@blueberry-ts-backup
+      - CRON_TASK_2=0 5 * * * sh /scripts/backup-remote.sh apple root@apple-ts-backup
     network_mode: service:ts-backup
     restart: unless-stopped
     depends_on:
