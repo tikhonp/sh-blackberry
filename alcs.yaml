@@ -1,6 +1,6 @@
 services:
   alcs-server:
-    image: ghcr.io/tikhonp/alcs-server:latest
+    image: ghcr.io/tikhonp/alcs-server:dev
     container_name: alcs-server
     restart: unless-stopped
     depends_on:
@@ -18,7 +18,7 @@ services:
       - dev.dozzle.group=alcs
 
   alcs-worker:
-    image: ghcr.io/tikhonp/alcs-worker:latest
+    image: ghcr.io/tikhonp/alcs-worker:dev
     container_name: alcs-worker
     restart: unless-stopped
     depends_on:
