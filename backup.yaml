@@ -58,6 +58,7 @@ services:
       # files in .trash/<date> on the remote for this many days before pruning.
       - BACKUP_MAX_DELETE=500
       - BACKUP_TRASH_RETENTION_DAYS=30
+      - BACKUP_DEST=/mnt/backup
       - CRON_TASK_1=0 4 * * * sh /scripts/backup-remote.sh blueberry root@blueberry-ts-backup
       - CRON_TASK_2=0 5 * * * sh /scripts/backup-remote.sh apple root@apple-ts-backup
     network_mode: service:ts-backup
