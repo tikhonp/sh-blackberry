@@ -117,9 +117,13 @@ services:
     container_name: navidrome
     restart: unless-stopped
     env_file:
-      - "./secrets/blackberry/navidrome.env"
       - "./secrets/proxy.env"
+    environment:
+      - ND_CONFIGFILE=/etc/navidrome/navidrome.toml
+      - NO_PROXY=localhost,127.0.0.1,audiomuse-flask
+      - no_proxy=localhost,127.0.0.1,audiomuse-flask
     volumes:
+      - "./secrets/blackberry/navidrome.toml:/etc/navidrome/navidrome.toml:ro"
       - "${SWINGMUSIC_DATA}/music:/music:ro"
       - "${SWINGMUSIC_DATA}/navidrome:/data"
     expose:
