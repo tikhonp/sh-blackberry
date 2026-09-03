@@ -24,6 +24,7 @@ services:
     image: ghcr.io/tikhonp/wrapper:latest
     container_name: apple-music-wrapper
     restart: unless-stopped
+    privileged: true
     environment:
       args: "-H 0.0.0.0"
     volumes:
@@ -41,7 +42,7 @@ services:
       - dev.dozzle.group=music
 
   apple-music-api:
-    image: ghcr.io/tikhonp/apple-music-dl-http-wrapper:v1.1.5
+    image: ghcr.io/tikhonp/apple-music-dl-http-wrapper:v1.1.6
     container_name: apple-music-api
     restart: unless-stopped
     environment:
