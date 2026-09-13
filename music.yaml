@@ -157,20 +157,6 @@ services:
     labels:
       - dev.dozzle.group=music
 
-  audiomuse-redis:
-    image: redis:7-alpine
-    container_name: audiomuse-redis
-    restart: unless-stopped
-    volumes:
-      - "${SWINGMUSIC_DATA}/audiomuse/redis:/data"
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "100m"
-        max-file: "10"
-    labels:
-      - dev.dozzle.group=audiomuse
-
   audiomuse-postgres:
     image: postgres:15-alpine
     container_name: audiomuse-postgres
@@ -201,7 +187,6 @@ services:
       SERVICE_TYPE: flask
       POSTGRES_HOST: audiomuse-postgres
       POSTGRES_PORT: "5432"
-      REDIS_URL: "redis://audiomuse-redis:6379/0"
       TEMP_DIR: /app/temp_audio
       MEDIASERVER_TYPE: navidrome
       NAVIDROME_URL: "http://navidrome:4533"
@@ -210,8 +195,6 @@ services:
     depends_on:
       audiomuse-postgres:
         condition: service_healthy
-      audiomuse-redis:
-        condition: service_started
     volumes:
       - "${SWINGMUSIC_DATA}/audiomuse/temp-flask:/app/temp_audio"
       - "${SWINGMUSIC_DATA}/audiomuse/plugins:/app/plugin/installed"
@@ -232,15 +215,12 @@ services:
       SERVICE_TYPE: worker
       POSTGRES_HOST: audiomuse-postgres
       POSTGRES_PORT: "5432"
-      REDIS_URL: "redis://audiomuse-redis:6379/0"
       TEMP_DIR: /app/temp_audio
       MEDIASERVER_TYPE: navidrome
       NAVIDROME_URL: "http://navidrome:4533"
     depends_on:
       audiomuse-postgres:
         condition: service_healthy
-      audiomuse-redis:
-        condition: service_started
     volumes:
       - "${SWINGMUSIC_DATA}/audiomuse/temp-worker:/app/temp_audio"
       - "${SWINGMUSIC_DATA}/audiomuse/plugins:/app/plugin/installed"
