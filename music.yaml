@@ -214,6 +214,7 @@ services:
         condition: service_started
     volumes:
       - "${SWINGMUSIC_DATA}/audiomuse/temp-flask:/app/temp_audio"
+      - "${SWINGMUSIC_DATA}/audiomuse/plugins:/app/plugin/installed"
     logging:
       driver: "json-file"
       options:
@@ -242,6 +243,7 @@ services:
         condition: service_started
     volumes:
       - "${SWINGMUSIC_DATA}/audiomuse/temp-worker:/app/temp_audio"
+      - "${SWINGMUSIC_DATA}/audiomuse/plugins:/app/plugin/installed"
     logging:
       driver: "json-file"
       options:
