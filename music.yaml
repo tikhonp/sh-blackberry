@@ -114,7 +114,7 @@ services:
       - dev.dozzle.group=music
 
   navidrome:
-    image: deluan/navidrome:latest
+    image: deluan/navidrome:0.64.0
     container_name: navidrome
     restart: unless-stopped
     environment:
@@ -179,7 +179,7 @@ services:
       - dev.dozzle.group=audiomuse
 
   audiomuse-flask:
-    image: ghcr.io/neptunehub/audiomuse-ai:latest
+    image: ghcr.io/neptunehub/audiomuse-ai:3.6.0
     container_name: audiomuse-ai-flask-app
     restart: unless-stopped
     env_file: "./secrets/blackberry/audiomuse.env"
@@ -207,7 +207,7 @@ services:
       - dev.dozzle.group=audiomuse
 
   audiomuse-worker:
-    image: ghcr.io/neptunehub/audiomuse-ai:latest
+    image: ghcr.io/neptunehub/audiomuse-ai:3.6.0
     container_name: audiomuse-ai-worker
     restart: unless-stopped
     env_file: "./secrets/blackberry/audiomuse.env"
