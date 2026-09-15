@@ -55,7 +55,7 @@ ping_cronitor() {
     # exit status.
     [ -n "$DRY_RUN" ] && return 0
     [ -z "${CRONITOR_PING_URL:-}" ] && return 0
-    URL="$CRONITOR_PING_URL/blackberry-backup-remote-$LABEL?state=$1"
+    URL="$CRONITOR_PING_URL/backup-remote-$LABEL?state=$1"
     if command -v curl >/dev/null 2>&1; then
         curl -fsS -m 10 "$URL" >/dev/null 2>&1
     else
