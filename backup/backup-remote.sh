@@ -17,7 +17,7 @@
 #
 # Env knobs (all optional):
 #   BACKUP_MAX_DELETE (500), BACKUP_TRASH_RETENTION_DAYS (30), BACKUP_BWLIMIT (unset),
-#   BACKUP_SRC (/data), BACKUP_DEST (/data)
+#   BACKUP_SRC (/data), BACKUP_DEST (/data), CRONITOR_PING_URL (unset - disables telemetry)
 
 set -u
 
@@ -49,12 +49,28 @@ LOCK_MAX_AGE_MIN=$((23 * 60))
 log() { echo "[backup-remote:$LABEL] $*"; }
 err() { echo "[backup-remote:$LABEL] $*" >&2; }
 
+ping_cronitor() {
+    # $1 = run|complete|fail. No-ops for dry runs (-n) or if CRONITOR_PING_URL is
+    # unset, so monitoring can never affect, or be confused by, the backup's own
+    # exit status.
+    [ -n "$DRY_RUN" ] && return 0
+    [ -z "${CRONITOR_PING_URL:-}" ] && return 0
+    URL="$CRONITOR_PING_URL/blackberry-backup-remote-$LABEL?state=$1"
+    if command -v curl >/dev/null 2>&1; then
+        curl -fsS -m 10 "$URL" >/dev/null 2>&1
+    else
+        wget -qO- -T 10 "$URL" >/dev/null 2>&1
+    fi
+    return 0
+}
+
 if ! mkdir "$LOCK_DIR" 2>/dev/null; then
     if [ -n "$(find "$LOCK_DIR" -maxdepth 0 -mmin +$LOCK_MAX_AGE_MIN 2>/dev/null)" ]; then
         log "WARNING: removing stale lock $LOCK_DIR (older than ${LOCK_MAX_AGE_MIN}min)"
         rmdir "$LOCK_DIR" 2>/dev/null
         if ! mkdir "$LOCK_DIR" 2>/dev/null; then
             err "CRITICAL: cannot acquire lock $LOCK_DIR"
+            ping_cronitor fail
             exit 1
         fi
     else
@@ -64,15 +80,18 @@ if ! mkdir "$LOCK_DIR" 2>/dev/null; then
 fi
 trap 'rmdir "$LOCK_DIR" 2>/dev/null' EXIT
 trap 'exit 1' INT TERM HUP
+ping_cronitor run
 
 if [ ! -e "$SRC/$CANARY" ]; then
     err "CRITICAL: source canary $SRC/$CANARY missing — is the backup HDD mounted?"
     err "(one-time setup while it is mounted: touch $SRC/$CANARY)"
+    ping_cronitor fail
     exit 1
 fi
 
 if [ -z "$(find "$SRC" -mindepth 1 -maxdepth 1 ! -name "$CANARY" 2>/dev/null | head -n 1)" ]; then
     err "CRITICAL: source $SRC is empty — refusing to sync"
+    ping_cronitor fail
     exit 1
 fi
 
@@ -80,6 +99,7 @@ fi
 if ! ssh $SSH_OPTS "$REMOTE" "test -e $DEST/$CANARY"; then
     err "CRITICAL: target canary $REMOTE:$DEST/$CANARY missing — is the remote backup disk mounted?"
     err "(one-time setup while it is mounted: ssh $REMOTE 'touch $DEST/$CANARY')"
+    ping_cronitor fail
     exit 1
 fi
 
@@ -115,19 +135,23 @@ DURATION=$(($(date +%s) - START))
 case $RC in
     0)
         log "OK: sync to $REMOTE finished in ${DURATION}s"
+        ping_cronitor complete
         ;;
     24)
         log "OK (warning): some source files vanished during transfer (rsync code 24), finished in ${DURATION}s"
+        ping_cronitor complete
         ;;
     25)
         err "CRITICAL: deletion cap hit — rsync stopped deleting after $MAX_DELETE files."
         err "Inspect what happened before doing anything else. If the deletions are legitimate"
         err "(big cleanup), raise BACKUP_MAX_DELETE in .env for one run. Nothing is lost:"
         err "displaced files are in $REMOTE:$TRASH/$STAMP"
+        ping_cronitor fail
         exit 25
         ;;
     *)
         err "ERROR: rsync to $REMOTE failed with exit code $RC after ${DURATION}s"
+        ping_cronitor fail
         exit $RC
         ;;
 esac

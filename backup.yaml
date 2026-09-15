@@ -53,6 +53,7 @@ services:
       - "./backup:/scripts:ro"
     env_file:
       - .env
+      - ./secrets/cronitor.env
     environment:
       # Guardrails for backup-remote.sh: cap deletions per run; keep deleted/overwritten
       # files in .trash/<date> on the remote for this many days before pruning.
