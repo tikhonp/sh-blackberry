@@ -179,7 +179,7 @@ services:
       - dev.dozzle.group=audiomuse
 
   audiomuse-flask:
-    image: ghcr.io/neptunehub/audiomuse-ai:3.6.0
+    image: ghcr.io/neptunehub/audiomuse-ai:3.6.1
     container_name: audiomuse-ai-flask-app
     restart: unless-stopped
     env_file: "./secrets/blackberry/audiomuse.env"
@@ -207,7 +207,7 @@ services:
       - dev.dozzle.group=audiomuse
 
   audiomuse-worker:
-    image: ghcr.io/neptunehub/audiomuse-ai:3.6.0
+    image: ghcr.io/neptunehub/audiomuse-ai:3.6.1
     container_name: audiomuse-ai-worker
     restart: unless-stopped
     env_file: "./secrets/blackberry/audiomuse.env"
