@@ -9,6 +9,16 @@ services:
     expose:
       - "9990"
     env_file: "./secrets/blackberry/alcs.env"
+    # distroless, non-root, writes nothing but /tmp (multipart uploads)
+    read_only: true
+    tmpfs:
+      - /tmp
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    # longer than the server's own 15 s graceful shutdown
+    stop_grace_period: 20s
     logging:
       driver: "json-file"
       options:
@@ -25,6 +35,15 @@ services:
       alcs-db:
         condition: service_healthy
     env_file: "./secrets/blackberry/alcs.env"
+    read_only: true
+    tmpfs:
+      - /tmp
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    # a reminder or an alert already under way is finished before exiting
+    stop_grace_period: 45s
     logging:
       driver: "json-file"
       options:
