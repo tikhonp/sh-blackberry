@@ -1,6 +1,6 @@
 services:
   influxdb:
-    image: influxdb:2.2
+    image: influxdb:2.8
     container_name: scrutiny-influxdb
     restart: unless-stopped
     expose:
@@ -24,7 +24,7 @@ services:
       - dev.dozzle.group=scrutiny
 
   web:
-    image: ghcr.io/analogj/scrutiny:master-web
+    image: ghcr.io/analogj/scrutiny:latest-web
     container_name: scrutiny-web
     restart: unless-stopped
     expose:
@@ -79,7 +79,7 @@ services:
       - dev.dozzle.group=scrutiny
 
   collector:
-    image: ghcr.io/analogj/scrutiny:master-collector
+    image: ghcr.io/analogj/scrutiny:latest-collector
     container_name: scrutiny-collector
     restart: unless-stopped
     cap_add:

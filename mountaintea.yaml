@@ -59,7 +59,7 @@ services:
       - dev.dozzle.group=mountaintea
 
   mountiantea-db:
-    image: postgres:17.6
+    image: postgres:17.11
     container_name: mountaintea-db
     env_file: "./secrets/blackberry/mountaintea.env"
     restart: unless-stopped
