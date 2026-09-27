@@ -97,6 +97,12 @@ services:
       - SSH_TARGET_PORT=2283
     volumes:
       - "./secrets/ssh-key:/id_rsa:ro"
+    healthcheck:
+      test: ["CMD", "pgrep", "-f", "^/usr/bin/ssh "]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
     depends_on:
       immich-server:
         condition: service_healthy
