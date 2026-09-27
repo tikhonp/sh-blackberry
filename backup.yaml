@@ -57,7 +57,7 @@ services:
     environment:
       # Guardrails for backup-remote.sh: cap deletions per run; keep deleted/overwritten
       # files in .trash/<date> on the remote for this many days before pruning.
-      - BACKUP_MAX_DELETE=500
+      - BACKUP_MAX_DELETE=1000
       - BACKUP_TRASH_RETENTION_DAYS=30
       - CRON_TASK_1=0 5 * * * sh /scripts/backup-remote.sh apple root@apple-ts-backup
       # - CRON_TASK_2=0 4 * * * sh /scripts/backup-remote.sh blueberry root@blueberry-ts-backup
