@@ -87,15 +87,15 @@ services:
       - SYS_ADMIN
     volumes:
       - "/run/udev:/run/udev:ro"
-      - "./collector-config.yaml/:/opt/scrutiny/config/collector.yaml:ro"
+      - "./collector-config.yaml:/opt/scrutiny/config/collector.yaml:ro"
     environment:
       COLLECTOR_API_ENDPOINT: 'http://web:8080'
     depends_on:
       web:
         condition: service_healthy
     devices:
-      - "/dev/sda"
-      - "/dev/nvme0"
+      - "/dev/disk/by-id/ata-ST14000NM000J-2TX103_ZR904GY1:/dev/sda"            # backup HDD (USB)
+      - "/dev/disk/by-id/nvme-KINGSTON_SNV3S4000G_50026B7283902E24:/dev/nvme0"  # internal NVMe
     logging:
       driver: "json-file"
       options:
