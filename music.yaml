@@ -21,18 +21,19 @@ services:
       - apple-music-api
 
   apple-music-wrapper:
-    image: ghcr.io/tikhonp/wrapper:latest
+    image: ghcr.io/tikhonp/wrapper-lite:latest
     container_name: apple-music-wrapper
     restart: unless-stopped
     privileged: true
-    environment:
-      args: "-H 0.0.0.0"
+    # the launcher only handles SIGINT; as PID 1 it would ignore SIGTERM
+    stop_signal: SIGINT
+    # bypass the image's entrypoint.sh: it checks the old wrapper's DB path and
+    # would re-run --login on every start
+    command: ["/app/wrapper-lite-rootless", "--base-dir", "/data", "--host", "0.0.0.0", "--port", "12340"]
     volumes:
-      - "${SWINGMUSIC_DATA}/apple-music-data/:/app/rootfs/data/"
+      - "${SWINGMUSIC_DATA}/apple-music-lite-data/:/app/rootfs/data/"
     expose:
-      - "10020"
-      - "20020"
-      - "30020"
+      - "12340"
     logging:
       driver: "json-file"
       options:
@@ -42,7 +43,7 @@ services:
       - dev.dozzle.group=music
 
   apple-music-api:
-    image: ghcr.io/tikhonp/apple-music-dl-http-wrapper:v1.1.6
+    image: ghcr.io/tikhonp/apple-music-dl-http-wrapper:latest
     container_name: apple-music-api
     restart: unless-stopped
     environment:
