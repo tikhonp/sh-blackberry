@@ -40,6 +40,8 @@ services:
       - TS_USERSPACE=false
     volumes:
       - ts-dozzle-state:/var/lib/tailscale
+    tmpfs:
+      - /tmp
     devices:
       - /dev/net/tun:/dev/net/tun
     cap_add:

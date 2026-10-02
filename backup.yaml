@@ -87,6 +87,8 @@ services:
       - TS_ACCEPT_DNS=true
     volumes:
       - ts-backup-state:/var/lib/tailscale
+    tmpfs:
+      - /tmp
     devices:
       - /dev/net/tun:/dev/net/tun
     cap_add:

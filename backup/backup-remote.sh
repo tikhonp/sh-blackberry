@@ -10,6 +10,7 @@
 #   target canary  abort if <host>:$BACKUP_DEST/.backup-canary is missing (remote disk
 #                  not mounted). One-time setup while the disk IS mounted:
 #                  ssh <user@host> 'touch /data/.backup-canary'
+#                  (an unreachable host is reported separately, not as a missing canary)
 #   deletion cap   rsync --max-delete: a run may delete at most $BACKUP_MAX_DELETE files
 #   trash          deleted/overwritten files are moved (same-disk rename) to
 #                  $BACKUP_DEST/.trash/<date>/ on the receiver instead of destroyed,
@@ -96,7 +97,16 @@ if [ -z "$(find "$SRC" -mindepth 1 -maxdepth 1 ! -name "$CANARY" 2>/dev/null | h
 fi
 
 # shellcheck disable=SC2086  # SSH_OPTS must word-split
-if ! ssh $SSH_OPTS "$REMOTE" "test -e $DEST/$CANARY"; then
+ssh $SSH_OPTS "$REMOTE" "test -e $DEST/$CANARY"
+SSH_RC=$?
+if [ $SSH_RC -eq 255 ]; then
+    # ssh's own failure (connect/auth), as opposed to the remote `test` returning 1
+    err "CRITICAL: cannot reach $REMOTE over ssh — is the node up?"
+    err "If the tailnet peer answers (tailscale ping) but port 22 is refused, the target's"
+    err "rsync-server is stranded in a stale netns of its tailscale sidecar: on the target, docker restart rsync-server"
+    ping_cronitor fail
+    exit 1
+elif [ $SSH_RC -ne 0 ]; then
     err "CRITICAL: target canary $REMOTE:$DEST/$CANARY missing — is the remote backup disk mounted?"
     err "(one-time setup while it is mounted: ssh $REMOTE 'touch $DEST/$CANARY')"
     ping_cronitor fail
