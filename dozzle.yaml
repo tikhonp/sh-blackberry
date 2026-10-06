@@ -17,6 +17,11 @@ services:
       retries: 5
       start_period: 5s
       start_interval: 5s
+    secrets:
+      - source: cert
+        target: /dozzle_cert.pem
+      - source: key
+        target: /dozzle_key.pem
     network_mode: service:ts-dozzle
     depends_on:
       - ts-dozzle
@@ -58,3 +63,9 @@ services:
 volumes:
   ts-dozzle-state:
     name: "blackberry-ts-dozzle-state"
+
+secrets:
+  cert:
+    file: ./secrets/dozzle-certs/dozzle_cert.pem
+  key:
+    file: ./secrets/dozzle-certs/dozzle_key.pem
