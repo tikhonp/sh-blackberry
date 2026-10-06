@@ -1,6 +1,6 @@
 services:
   influxdb:
-    image: influxdb:2.8
+    image: influxdb:2.9
     container_name: scrutiny-influxdb
     restart: unless-stopped
     expose:

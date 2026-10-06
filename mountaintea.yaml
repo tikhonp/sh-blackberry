@@ -110,6 +110,7 @@ services:
     labels:
       - dev.dozzle.group=mountaintea
       - dev.dozzle.update=auto
+      - dev.dozzle.icon=data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGcgY2xpcC1wYXRoPSJ1cmwoI2NsaXAwXzMwN180OCkiPgo8cmVjdCB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHJ4PSI0IiBmaWxsPSIjRTk1MDBBIi8+CjxjaXJjbGUgY3g9IjMwIiBjeT0iMzAiIHI9IjE1LjIzNDQiIGZpbGw9IiM0QjEyMDIiLz4KPC9nPgo8ZGVmcz4KPGNsaXBQYXRoIGlkPSJjbGlwMF8zMDdfNDgiPgo8cmVjdCB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIGZpbGw9IndoaXRlIi8+CjwvY2xpcFBhdGg+CjwvZGVmcz4KPC9zdmc+Cg==
 
 volumes:
   db-data:
