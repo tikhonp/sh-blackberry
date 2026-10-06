@@ -86,6 +86,7 @@ services:
         max-file: "10"
     labels:
       - dev.dozzle.group=music
+      - dev.dozzle.update=auto
     # Uncomment the following line to give Picard access to CD-ROM drive
     # devices:
     #   - "/dev/sr0:/dev/sr0"
@@ -121,7 +122,7 @@ services:
       - dev.dozzle.group=music
 
   navidrome:
-    image: deluan/navidrome:0.64.2
+    image: deluan/navidrome:latest
     container_name: navidrome
     restart: unless-stopped
     environment:
@@ -190,6 +191,7 @@ services:
         max-file: "10"
     labels:
       - dev.dozzle.group=audiomuse
+      - dev.dozzle.update=auto
 
   audiomuse-flask:
     image: ghcr.io/neptunehub/audiomuse-ai:3.6.3

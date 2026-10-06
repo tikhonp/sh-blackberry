@@ -81,6 +81,7 @@ services:
     labels:
       - docker-volume-backup.archive-pre=/bin/sh -c 'pg_dump -U dummy -w mountaintea-db > /tmp/dumps/mountaintea-db.dump'
       - dev.dozzle.group=mountaintea
+      - dev.dozzle.update=auto
     logging:
       driver: "json-file"
       options:
@@ -108,6 +109,7 @@ services:
         max-file: "10"
     labels:
       - dev.dozzle.group=mountaintea
+      - dev.dozzle.update=auto
 
 volumes:
   db-data:

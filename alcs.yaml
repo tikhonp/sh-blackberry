@@ -68,6 +68,7 @@ services:
     labels:
       - docker-volume-backup.archive-pre=/bin/sh -c 'pg_dump -U dummy -w --clean --if-exists -d alcs-db > /tmp/dumps/alcs-db.dump'
       - dev.dozzle.group=alcs
+      - dev.dozzle.update=auto
     logging:
       driver: "json-file"
       options:
@@ -124,3 +125,4 @@ services:
         max-file: "10"
     labels:
       - dev.dozzle.group=alcs
+      - dev.dozzle.update=auto

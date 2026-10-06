@@ -32,6 +32,7 @@ services:
         max-file: "10"
     labels:
       - dev.dozzle.group=dozzle
+      - dev.dozzle.update=auto
 
   ts-dozzle:
     image: tailscale/tailscale:${TAILSCALE_V}
@@ -59,6 +60,7 @@ services:
         max-file: "10"
     labels:
       - dev.dozzle.group=dozzle
+      - dev.dozzle.update=auto
 
 volumes:
   ts-dozzle-state:

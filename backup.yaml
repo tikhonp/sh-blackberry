@@ -101,6 +101,7 @@ services:
         max-file: "10"
     labels:
       - dev.dozzle.group=backup
+      - dev.dozzle.update=auto
     profiles: ["disk-enabled"]
 
 volumes:

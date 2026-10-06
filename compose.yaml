@@ -6,7 +6,6 @@ include:
   - vaultwarden.yaml
   - music.yaml
   - scrutiny.yaml
-  - watchtower.yaml
   - mountaintea.yaml
   - usememos.yaml
   - alcs.yaml
