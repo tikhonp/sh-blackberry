@@ -120,6 +120,7 @@ services:
         max-file: "10"
     labels:
       - dev.dozzle.group=music
+      - "dev.dozzle.icon=${DOZZLE_ICON_AUTOSSH}"
 
   navidrome:
     image: deluan/navidrome:latest
@@ -170,6 +171,7 @@ services:
         max-file: "10"
     labels:
       - dev.dozzle.group=music
+      - "dev.dozzle.icon=${DOZZLE_ICON_AUTOSSH}"
 
   audiomuse-postgres:
     image: postgres:15-alpine
@@ -276,3 +278,4 @@ services:
         max-file: "10"
     labels:
       - dev.dozzle.group=audiomuse
+      - "dev.dozzle.icon=${DOZZLE_ICON_AUTOSSH}"

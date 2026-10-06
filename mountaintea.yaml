@@ -44,6 +44,7 @@ services:
         max-file: "10"
     labels:
       - dev.dozzle.group=mountaintea
+      - "dev.dozzle.icon=${DOZZLE_ICON_AUTOSSH}"
 
   mountaintea-server:
     image: ghcr.io/tikhonp/mountaintea-band-site-server:latest

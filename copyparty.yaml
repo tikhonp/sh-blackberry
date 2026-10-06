@@ -60,3 +60,4 @@ services:
         max-file: "10"
     labels:
       - dev.dozzle.group=copyparty
+      - "dev.dozzle.icon=${DOZZLE_ICON_AUTOSSH}"

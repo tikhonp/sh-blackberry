@@ -48,3 +48,4 @@ services:
         max-file: "10"
     labels:
       - dev.dozzle.group=vaultwarden
+      - "dev.dozzle.icon=${DOZZLE_ICON_AUTOSSH}"

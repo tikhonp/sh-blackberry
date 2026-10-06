@@ -108,6 +108,7 @@ services:
         condition: service_healthy
     labels:
       - dev.dozzle.group=immich
+      - "dev.dozzle.icon=${DOZZLE_ICON_AUTOSSH}"
     logging:
       driver: "json-file"
       options:

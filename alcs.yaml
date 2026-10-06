@@ -104,6 +104,7 @@ services:
         max-file: "10"
     labels:
       - dev.dozzle.group=alcs
+      - "dev.dozzle.icon=${DOZZLE_ICON_AUTOSSH}"
 
   alcs-backup:
     image: offen/docker-volume-backup:v2
