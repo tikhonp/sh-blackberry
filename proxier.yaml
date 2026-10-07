@@ -1,0 +1,90 @@
+services:
+  proxier:
+    image: ghcr.io/tikhonp/proxier:latest
+    container_name: proxier
+    restart: unless-stopped
+    # Nothing writes outside /data and /tmp; no capability is needed, the node
+    # on the tailnet is userspace (tsnet), and there is no Docker socket.
+    read_only: true
+    user: "65532:65532"
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    tmpfs:
+      - /tmp
+    env_file:
+      # PROXIER_MASTER_KEY, PROXIER_TS_AUTHKEY (see proxier.env.example)
+      - ./secrets/blackberry/proxier.env
+    environment:
+      PROXIER_BASE_URL: "https://proxier.tikhonnnnn.com"
+      PROXIER_TZ: "Europe/Moscow"
+      # The proxier network below: its only other member is ssht-proxier, which
+      # carries nginx's X-Real-IP. Nothing else may set a client address.
+      PROXIER_TRUSTED_PROXIES: "10.89.250.0/29"
+    volumes:
+      # Must be owned by 65532:65532: sudo install -d -o 65532 -g 65532 -m 700 ${PROXIER_DATA}
+      - "${PROXIER_DATA}:/data"
+    expose:
+      - 8080
+    # Running jobs get their grace period to finish a step on shutdown.
+    stop_grace_period: 30s
+    healthcheck:
+      # The image has no curl; proxier asks its own /healthz.
+      test: ["CMD", "/bin/proxier", "healthcheck"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    networks:
+      - proxier
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "10"
+    labels:
+      - dev.dozzle.group=proxier
+      - dev.dozzle.update=auto
+
+  ssht-proxier:
+    image: jnovack/autossh:${AUTOSSH_V}
+    container_name: ssht-proxier
+    restart: unless-stopped
+    env_file: 
+      - ./secrets/ssh-tunnel.env
+      - .env
+    environment:
+      - SSH_OPTIONS=-o UserKnownHostsFile=/dev/null
+      - SSH_TUNNEL_PORT=10005
+      - SSH_TARGET_HOST=proxier
+      - SSH_TARGET_PORT=8080
+    volumes:
+      - "./secrets/ssh-key:/id_rsa:ro"
+    healthcheck:
+      test: ["CMD", "pgrep", "-f", "^/usr/bin/ssh "]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    depends_on:
+      - proxier
+    networks:
+      - proxier
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "10"
+    labels:
+      - dev.dozzle.group=proxier
+      - "dev.dozzle.icon=${DOZZLE_ICON_AUTOSSH}"
+
+networks:
+  proxier:
+    name: blackberry-proxier
+    ipam:
+      config:
+        # Fixed so PROXIER_TRUSTED_PROXIES can name it. Pick another range if
+        # this one meets a network of the house.
+        - subnet: 10.89.250.0/29

@@ -23,6 +23,10 @@ services:
 
       - "${MEMOS_DATA}:/source-memos:ro"
       - "${BACKUP_MEMOS_LOCAL}:/destination-memos"
+
+      # Only the nightly snapshots (03:30): the live proxier.db is in use, its copy would not be consistent.
+      - "${PROXIER_DATA}backups/:/source-proxier:ro"
+      - "${BACKUP_PROXIER_LOCAL}:/destination-proxier"
     env_file: 
       - .env
     environment:
@@ -32,6 +36,7 @@ services:
       - CRON_TASK_4=45 2 * * * echo "Starting backup SWINGMUSIC..." && rsync -a --delete --whole-file --stats /source-swingmusic/ /destination-swingmusic/
       - CRON_TASK_5=0 3 * * * echo "Starting backup SCRUTINY..." && rsync -a --delete --whole-file --stats /source-scrutiny/ /destination-scrutiny/
       - CRON_TASK_6=15 3 * * * echo "Starting backup MEMOS..." && rsync -a --delete --whole-file --stats /source-memos/ /destination-memos/
+      - CRON_TASK_7=45 3 * * * echo "Starting backup PROXIER..." && rsync -a --delete --whole-file --stats /source-proxier/ /destination-proxier/
     restart: unless-stopped
     logging:
       driver: "json-file"

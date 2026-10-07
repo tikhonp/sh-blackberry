@@ -9,3 +9,4 @@ include:
   - mountaintea.yaml
   - usememos.yaml
   - alcs.yaml
+  - proxier.yaml
