@@ -24,7 +24,6 @@ services:
       - "${MEMOS_DATA}:/source-memos:ro"
       - "${BACKUP_MEMOS_LOCAL}:/destination-memos"
 
-      # Only the nightly snapshots (03:30): the live proxier.db is in use, its copy would not be consistent.
       - "${PROXIER_DATA}backups/:/source-proxier:ro"
       - "${BACKUP_PROXIER_LOCAL}:/destination-proxier"
     env_file: 
