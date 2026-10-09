@@ -22,6 +22,9 @@ services:
       # The proxier network below: its only other member is ssht-proxier, which
       # carries nginx's X-Real-IP. Nothing else may set a client address.
       PROXIER_TRUSTED_PROXIES: "10.89.250.0/29"
+      # DevTools address of the chromium sidecar for discovery's site visits.
+      # Empty: discovery runs the catalog lookup only.
+      PROXIER_CHROMIUM_URL: "http://chromium:9222"
     volumes:
       # Must be owned by 65532:65532: sudo install -d -o 65532 -g 65532 -m 700 ${PROXIER_DATA}
       - "${PROXIER_DATA}:/data"
@@ -38,6 +41,7 @@ services:
       start_period: 30s
     networks:
       - proxier
+      - discovery
     logging:
       driver: "json-file"
       options:
@@ -46,6 +50,33 @@ services:
     labels:
       - dev.dozzle.group=proxier
       - dev.dozzle.update=auto
+
+  # Headless Chromium that proxier drives over CDP to visit sites during
+  # discovery, directly or through proxier's per-visit SOCKS listener. It runs
+  # arbitrary sites' scripts, so it is only on the discovery network: on the
+  # proxier network it could set X-Real-IP.
+  chromium:
+    # Pinned: upgrades are deliberate, so no dev.dozzle.update label.
+    image: chromedp/headless-shell:156.0.8078.12
+    container_name: proxier-chromium
+    restart: unless-stopped
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    mem_limit: 1g
+    shm_size: 256m
+    tmpfs:
+      - /tmp
+    networks:
+      - discovery
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "10"
+    labels:
+      - dev.dozzle.group=proxier
 
   ssht-proxier:
     image: jnovack/autossh:${AUTOSSH_V}
@@ -88,3 +119,10 @@ networks:
         # Fixed so PROXIER_TRUSTED_PROXIES can name it. Pick another range if
         # this one meets a network of the house.
         - subnet: 10.89.250.0/29
+  discovery:
+    name: blackberry-proxier-discovery
+    # Only proxier and chromium. Not internal: a direct visit goes out from
+    # home, as the admin's own browser would.
+    ipam:
+      config:
+        - subnet: 10.89.251.0/29
