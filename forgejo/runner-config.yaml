@@ -9,7 +9,7 @@ log:
 runner:
   # One job at a time: concurrent jobs on one dind daemon can see each
   # other's containers.
-  capacity: 1
+  capacity: 5
   # Lower than the 3h default: a stuck job holds the only slot.
   timeout: 1h
   envs:
