@@ -1,6 +1,6 @@
 services:
   music-download-bot:
-    image: ghcr.io/tikhonp/music-download-bot:latest
+    image: git.tikhonnnnn.com/tikhon/music-download-bot:latest
     container_name: music-download-bot
     restart: unless-stopped
     env_file:
