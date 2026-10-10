@@ -8,7 +8,7 @@ services:
         condition: service_healthy
     expose:
       - "9990"
-    env_file: "./secrets/blackberry/alcs.env"
+    env_file: "./secrets/blackberry/alcs/alcs.env"
     # distroless, non-root, writes nothing but /tmp (multipart uploads)
     read_only: true
     tmpfs:
@@ -34,7 +34,7 @@ services:
     depends_on:
       alcs-db:
         condition: service_healthy
-    env_file: "./secrets/blackberry/alcs.env"
+    env_file: "./secrets/blackberry/alcs/alcs.env"
     read_only: true
     tmpfs:
       - /tmp
@@ -59,7 +59,7 @@ services:
     volumes:
       - "${ALCS_DATA}/db/:/var/lib/postgresql/"
       - "${ALCS_DATA}/backups/:/tmp/dumps/"
-    env_file: "./secrets/blackberry/alcs.env"
+    env_file: "./secrets/blackberry/alcs/alcs-db.env"
     healthcheck:
       test: [ "CMD", "pg_isready", "-q", "-U", "dummy", "-d", "alcs-db" ]
       interval: 1s
@@ -108,7 +108,7 @@ services:
   alcs-backup:
     image: offen/docker-volume-backup:v2
     container_name: alcs-backup
-    env_file: "./secrets/blackberry/alcs.env"
+    env_file: "./secrets/blackberry/alcs/alcs-backup.env"
     environment:
       BACKUP_FILENAME: backup-%Y-%m-%dT%H-%M-%S.tar.gz
       BACKUP_PRUNING_PREFIX: backup-
