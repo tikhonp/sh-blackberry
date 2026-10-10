@@ -98,9 +98,92 @@ services:
       - dev.dozzle.group=forgejo
       - "dev.dozzle.icon=${DOZZLE_ICON_AUTOSSH}"
 
+  forgejo-runner:
+    image: data.forgejo.org/forgejo/runner:13
+    container_name: forgejo-runner
+    restart: unless-stopped
+    command: ["forgejo-runner", "daemon", "--config", "/config.yaml"]
+    # Image user is 1000:1000; no capability needed.
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    environment:
+      DOCKER_HOST: tcp://forgejo-runner-dind:2375
+    volumes:
+      - "./forgejo/runner-config.yaml:/config.yaml:ro"
+      # Registration token (40 hex chars), see forgejo/runner-config.yaml.
+      - "./secrets/blackberry/forgejo-runner.token:/run/secrets/forgejo-runner-token:ro"
+      # The actions/cache store. Must be owned by 1000:1000:
+      # sudo install -d -o 1000 -g 1000 -m 700 ${FORGEJO_RUNNER_DATA}
+      - "${FORGEJO_RUNNER_DATA}:/data"
+    depends_on:
+      - forgejo-runner-dind
+    networks:
+      - forgejo-runner
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "10"
+    labels:
+      - dev.dozzle.group=forgejo
+      - dev.dozzle.update=auto
+
+  forgejo-runner-dind:
+    image: docker:29-dind
+    container_name: forgejo-runner-dind
+    restart: unless-stopped
+    privileged: true
+    environment:
+      # Plain TCP, no certificates: only the runner and the jobs reach it.
+      DOCKER_TLS_CERTDIR: ""
+    entrypoint: ["/bin/sh", "-c"]
+    # Images and build cache from old jobs are pruned daily, or they fill
+    # the SSD.
+    command:
+      - |
+        (while sleep 86400; do
+          docker -H tcp://127.0.0.1:2375 system prune -af --filter until=168h
+        done) &
+        exec dockerd-entrypoint.sh dockerd -H tcp://0.0.0.0:2375 --tls=false
+    volumes:
+      - forgejo-runner-dind:/var/lib/docker
+    # Shared by every job and the containers it starts. Raise if builds
+    # are OOM-killed.
+    mem_limit: 4g
+    cpus: 2
+    healthcheck:
+      test: ["CMD", "docker", "-H", "tcp://127.0.0.1:2375", "info"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    networks:
+      - forgejo-runner
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "10"
+    labels:
+      - dev.dozzle.group=forgejo
+      - dev.dozzle.update=auto
+
 networks:
   forgejo:
     name: blackberry-forgejo
     ipam:
       config:
         - subnet: 10.89.252.0/29
+  forgejo-runner:
+    name: blackberry-forgejo-runner
+    ipam:
+      config:
+        # Outside the 172.x pools dind gives job networks, so a job can still
+        # route to the runner's cache server.
+        - subnet: 10.89.253.0/29
+
+volumes:
+  forgejo-runner-dind:
+    name: blackberry-forgejo-runner-dind

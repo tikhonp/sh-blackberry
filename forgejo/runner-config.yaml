@@ -1,0 +1,50 @@
+# forgejo-runner config (forgejo.yaml). Defaults and every key:
+# docker run --rm data.forgejo.org/forgejo/runner:13 forgejo-runner generate-config
+# https://forgejo.org/docs/latest/admin/actions/security/
+
+log:
+  level: info
+  job_level: info
+
+runner:
+  # One job at a time: concurrent jobs on one dind daemon can see each
+  # other's containers.
+  capacity: 1
+  # Lower than the 3h default: a stuck job holds the only slot.
+  timeout: 1h
+  envs:
+    # The jobs' own docker CLI talks to forgejo-runner-dind, reached through
+    # the --add-host below.
+    DOCKER_HOST: tcp://docker:2375
+  # `runs-on:` names. docker: Forgejo's node image; ubuntu-latest: an image
+  # close to GitHub's, with the docker CLI, for workflows copied from GitHub.
+  labels:
+    - docker:docker://data.forgejo.org/oci/node:24-trixie
+    - ubuntu-latest:docker://ghcr.io/catthehacker/ubuntu:act-24.04
+
+cache:
+  # actions/cache, served by the runner itself from /data.
+  enabled: true
+  dir: /data/cache
+
+container:
+  # Job containers and their `services:` go to forgejo-runner-dind.
+  docker_host: tcp://forgejo-runner-dind:2375
+  # "": a fresh network per job.
+  network: ""
+  privileged: false
+  valid_volumes: []
+  # host-gateway is forgejo-runner-dind itself, as seen from a job.
+  options: --add-host=docker:host-gateway
+
+server:
+  connections:
+    forgejo:
+      # The public URL, through the gateway: the runner is not on the forgejo
+      # network, whose addresses Forgejo trusts for X-Forwarded-For.
+      url: https://git.tikhonnnnn.com/
+      # Offline registration (forgejo forgejo-cli actions register): the uuid
+      # is the token's first 16 hex chars, as ASCII, hex-encoded. Changing the
+      # token's first 16 chars means a new uuid here.
+      uuid: 30633564-3534-6662-6465-616336393432
+      token_url: file:/run/secrets/forgejo-runner-token
