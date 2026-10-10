@@ -2,8 +2,6 @@ services:
   vaultwarden:
     container_name: vaultwarden
     image: vaultwarden/server:1.37.4
-    environment:
-      DOMAIN: "https://secrets.tikhonnnnn.com"
     volumes:
       - "${VAULTWARDEN_DATA}:/data/"
     restart: unless-stopped
@@ -25,7 +23,6 @@ services:
     restart: unless-stopped
     env_file: 
       - ./secrets/ssh-tunnel.env
-      - .env
     environment:
       - SSH_OPTIONS=-o UserKnownHostsFile=/dev/null
       - SSH_TUNNEL_PORT=10006

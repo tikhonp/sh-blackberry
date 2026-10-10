@@ -7,8 +7,8 @@ services:
       - "${IMMICH_UPLOAD_LOCATION}:/data"
     env_file: 
       - ./secrets/blackberry/immich.env
-      - .env
     environment:
+      - TZ=${TZ}
       - IMMICH_ALLOW_SETUP=false
     restart: unless-stopped
     healthcheck:
@@ -34,7 +34,8 @@ services:
       - model-cache:/cache
     env_file: 
       - ./secrets/blackberry/immich.env
-      - .env
+    environment:
+      - TZ=${TZ}
     restart: unless-stopped
     healthcheck:
       disable: false
@@ -67,8 +68,8 @@ services:
     image: ghcr.io/immich-app/postgres:14-vectorchord0.4.3-pgvectors0.2.0@sha256:bcf63357191b76a916ae5eb93464d65c07511da41e3bf7a8416db519b40b1c23
     env_file: 
       - ./secrets/blackberry/immich.env
-      - .env
     environment:
+      TZ: ${TZ}
       POSTGRES_INITDB_ARGS: '--data-checksums'
     volumes:
       - ${IMMICH_DB_DATA_LOCATION}:/var/lib/postgresql/data
@@ -88,7 +89,6 @@ services:
     container_name: ssht-immich
     env_file: 
       - ./secrets/ssh-tunnel.env
-      - .env
     restart: unless-stopped
     environment:
       - SSH_OPTIONS=-o UserKnownHostsFile=/dev/null

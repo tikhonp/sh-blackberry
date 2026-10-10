@@ -8,8 +8,8 @@ services:
     volumes:
       - "${SCRUTINY_DATA}/influxdb:/var/lib/influxdb2"
       - "${SCRUTINY_DATA}/influxdb-alt:/etc/influxdb2"
-    env_file:
-      - .env
+    environment:
+      TZ: ${TZ}
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8086/health"]
       interval: 5s
@@ -33,9 +33,8 @@ services:
     volumes:
       - "${SCRUTINY_DATA}/db:/opt/scrutiny/db"
       - "./secrets/blackberry/scrutiny.yaml:/opt/scrutiny/config/scrutiny.yaml:ro"
-    env_file:
-      - .env
     environment:
+      TZ: ${TZ}
       SCRUTINY_WEB_INFLUXDB_HOST: 'influxdb'
     depends_on:
       influxdb:
@@ -61,7 +60,6 @@ services:
     restart: unless-stopped
     env_file:
       - ./secrets/ssh-tunnel.env
-      - .env
     environment:
       - SSH_OPTIONS=-o UserKnownHostsFile=/dev/null
       - SSH_TUNNEL_PORT=10009

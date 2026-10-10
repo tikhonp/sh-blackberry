@@ -26,9 +26,9 @@ services:
 
       - "${PROXIER_DATA}backups/:/source-proxier:ro"
       - "${BACKUP_PROXIER_LOCAL}:/destination-proxier"
-    env_file: 
-      - .env
     environment:
+      # cron schedules below are local time
+      - TZ=${TZ}
       - CRON_TASK_1=0 2 * * * echo "Starting backup VAULTWARDEN..." && rsync -a --delete --whole-file --stats /source-vaultwarden/ /destination-vaultwarden/
       - CRON_TASK_2=15 2 * * * echo "Starting backup COPYPARTY..." && rsync -a --delete --whole-file --stats /source-copyparty/ /destination-copyparty/
       - CRON_TASK_3=30 2 * * * echo "Starting backup IMMICH..." && rsync -a --delete --whole-file --stats /source-immich/ /destination-immich/
@@ -56,9 +56,9 @@ services:
       - "./secrets/ssh-key:/root/.ssh/id_rsa:ro"
       - "./backup:/scripts:ro"
     env_file:
-      - .env
       - ./secrets/cronitor.env
     environment:
+      - TZ=${TZ}
       # Guardrails for backup-remote.sh: cap deletions per run; keep deleted/overwritten
       # files in .trash/<date> on the remote for this many days before pruning.
       - BACKUP_MAX_DELETE=1000
@@ -83,7 +83,6 @@ services:
     container_name: ts-backup
     hostname: blackberry-ts-backup
     env_file: 
-      - .env
       - ./secrets/headscale.env
     environment:
       - TS_STATE_DIR=/var/lib/tailscale

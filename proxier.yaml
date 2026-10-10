@@ -26,7 +26,8 @@ services:
       # Empty: discovery runs the catalog lookup only.
       PROXIER_CHROMIUM_URL: "http://chromium:9222"
     volumes:
-      # Must be owned by 65532:65532: sudo install -d -o 65532 -g 65532 -m 700 ${PROXIER_DATA}
+      # Must be owned by 65532:65532, backups/ too (backup.yaml mounts it, so
+      # Docker would create it as root): sudo install -d -o 65532 -g 65532 -m 700 ${PROXIER_DATA} ${PROXIER_DATA}backups
       - "${PROXIER_DATA}:/data"
     expose:
       - 8080
@@ -84,7 +85,6 @@ services:
     restart: unless-stopped
     env_file: 
       - ./secrets/ssh-tunnel.env
-      - .env
     environment:
       - SSH_OPTIONS=-o UserKnownHostsFile=/dev/null
       - SSH_TUNNEL_PORT=10005

@@ -11,9 +11,8 @@ services:
 
       - "${COPYPARTY_DATA}/data:/w"
       - "${SWINGMUSIC_DATA}/music:/music"
-    env_file: 
-      - .env
     environment:
+      TZ: ${TZ}
       # enable mimalloc by replacing "NOPE" with "2" for a nice speed-boost (will use twice as much ram)
       LD_PRELOAD: /usr/lib/libmimalloc-secure.so.2
       # ensures log-messages are not delayed (but can reduce speed a tiny bit)
@@ -37,7 +36,6 @@ services:
     restart: unless-stopped
     env_file: 
       - ./secrets/ssh-tunnel.env
-      - .env
     environment:
       - SSH_OPTIONS=-o UserKnownHostsFile=/dev/null
       - SSH_TUNNEL_PORT=10003

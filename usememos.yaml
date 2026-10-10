@@ -26,7 +26,6 @@ services:
     restart: unless-stopped
     env_file: 
       - ./secrets/ssh-tunnel.env
-      - .env
     environment:
       - SSH_OPTIONS=-o UserKnownHostsFile=/dev/null
       - SSH_TUNNEL_PORT=10010
