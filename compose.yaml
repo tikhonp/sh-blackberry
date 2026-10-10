@@ -10,3 +10,4 @@ include:
   - usememos.yaml
   - alcs.yaml
   - proxier.yaml
+  - forgejo.yaml

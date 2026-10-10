@@ -1,0 +1,106 @@
+services:
+  forgejo:
+    image: codeberg.org/forgejo/forgejo:15-rootless
+    container_name: forgejo
+    restart: unless-stopped
+    user: "1000:1000"
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    env_file:
+      - ./secrets/blackberry/forgejo.env
+    volumes:
+      # Must be owned by 1000:1000: sudo install -d -o 1000 -g 1000 -m 700 ${FORGEJO_DATA}
+      - "${FORGEJO_DATA}:/var/lib/gitea"
+      - "/etc/localtime:/etc/localtime:ro"
+    expose:
+      - 3000
+      - 2222
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "-o", "/dev/null", "http://localhost:3000/api/healthz"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    networks:
+      - forgejo
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "10"
+    labels:
+      - dev.dozzle.group=forgejo
+      - dev.dozzle.update=auto
+
+  ssht-forgejo:
+    image: jnovack/autossh:${AUTOSSH_V}
+    container_name: ssht-forgejo
+    restart: unless-stopped
+    env_file:
+      - ./secrets/ssh-tunnel.env
+    environment:
+      - SSH_OPTIONS=-o UserKnownHostsFile=/dev/null
+      - SSH_TUNNEL_PORT=10007
+      - SSH_TARGET_HOST=forgejo
+      - SSH_TARGET_PORT=3000
+    volumes:
+      - "./secrets/ssh-key:/id_rsa:ro"
+    healthcheck:
+      test: ["CMD", "pgrep", "-f", "^/usr/bin/ssh "]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    depends_on:
+      - forgejo
+    networks:
+      - forgejo
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "10"
+    labels:
+      - dev.dozzle.group=forgejo
+      - "dev.dozzle.icon=${DOZZLE_ICON_AUTOSSH}"
+
+  ssht-forgejo-ssh:
+    image: jnovack/autossh:${AUTOSSH_V}
+    container_name: ssht-forgejo-ssh
+    restart: unless-stopped
+    env_file:
+      - ./secrets/ssh-tunnel.env
+    environment:
+      - SSH_OPTIONS=-o UserKnownHostsFile=/dev/null
+      - SSH_TUNNEL_PORT=10012
+      - SSH_TARGET_HOST=forgejo
+      - SSH_TARGET_PORT=2222
+    volumes:
+      - "./secrets/ssh-key:/id_rsa:ro"
+    healthcheck:
+      test: ["CMD", "pgrep", "-f", "^/usr/bin/ssh "]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    depends_on:
+      - forgejo
+    networks:
+      - forgejo
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "10"
+    labels:
+      - dev.dozzle.group=forgejo
+      - "dev.dozzle.icon=${DOZZLE_ICON_AUTOSSH}"
+
+networks:
+  forgejo:
+    name: blackberry-forgejo
+    ipam:
+      config:
+        - subnet: 10.89.252.0/29

@@ -26,6 +26,9 @@ services:
 
       - "${PROXIER_DATA}backups/:/source-proxier:ro"
       - "${BACKUP_PROXIER_LOCAL}:/destination-proxier"
+
+      - "${FORGEJO_DATA}:/source-forgejo:ro"
+      - "${BACKUP_FORGEJO_LOCAL}:/destination-forgejo"
     environment:
       # cron schedules below are local time
       - TZ=${TZ}
@@ -36,6 +39,7 @@ services:
       - CRON_TASK_5=0 3 * * * echo "Starting backup SCRUTINY..." && rsync -a --delete --whole-file --stats /source-scrutiny/ /destination-scrutiny/
       - CRON_TASK_6=15 3 * * * echo "Starting backup MEMOS..." && rsync -a --delete --whole-file --stats /source-memos/ /destination-memos/
       - CRON_TASK_7=45 3 * * * echo "Starting backup PROXIER..." && rsync -a --delete --whole-file --stats /source-proxier/ /destination-proxier/
+      - CRON_TASK_8=30 3 * * * echo "Starting backup FORGEJO..." && rsync -a --delete --whole-file --stats /source-forgejo/ /destination-forgejo/
     restart: unless-stopped
     logging:
       driver: "json-file"
