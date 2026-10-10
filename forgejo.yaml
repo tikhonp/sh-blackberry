@@ -151,8 +151,8 @@ services:
       - forgejo-runner-dind:/var/lib/docker
     # Shared by every job and the containers it starts. Raise if builds
     # are OOM-killed.
-    mem_limit: 4g
-    cpus: 2
+    mem_limit: 16g
+    cpus: 6
     healthcheck:
       test: ["CMD", "docker", "-H", "tcp://127.0.0.1:2375", "info"]
       interval: 30s
